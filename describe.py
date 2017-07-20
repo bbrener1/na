@@ -51,9 +51,15 @@ def describe(deviation_matrix, description = "./description/"):
     print sorted1.shape
 
     plt.figure()
-    sorted2 = sorted1[np.argsort(deviation_matrix,axis = 1)]
+    print "Starting Indecies"
+    indecies = np.argsort(deviation_matrix,axis = 1)
+    print "Sorted"
+    sorted2 = sorted1[indecies]
+    print "Picked"
     plt.imshow(sorted2,cmap='bwr')
+    print "Painted"
     plt.savefig(description + "sorted2.png",dpi=300)
+    print "Saved"
 
     plt.figure()
     sorted3 = sorted2.T
