@@ -20,7 +20,7 @@ def describe(deviation_matrix, description = "./description/"):
 
     plt.figure()
     plt.hist(deviation_matrix.flatten().T,bins=21)
-    plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*7000000)
+    plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*np.sum(deviation_matrix>0))
     plt.title("Frequency of Deviation From Neighbors (Std Deviations)")
     plt.ylabel("Number of Instances")
     plt.xlabel("Deviation (Standard Deviations)")
