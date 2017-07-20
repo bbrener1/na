@@ -54,7 +54,14 @@ def describe(deviation_matrix, description = "./description/"):
     print "Starting Indecies"
     indecies = np.argsort(deviation_matrix,axis = 1)
     print "Sorted"
-    sorted2 = sorted1[indecies]
+    print indecies.shape
+
+    indecies2 = np.argsort(np.sum(deviation_matrix,axis = 1))
+
+    print "Sorted sums"
+    indecies2.shape
+
+    sorted2 = sorted1[indecies2]
     print "Picked"
     plt.imshow(sorted2,cmap='bwr')
     print "Painted"
