@@ -48,28 +48,10 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
     if scroll == None:
         scroll = map(lambda x: float(x)*.01,range(1,96,5))
 
-    if isinstance(observations, str):
-        try:
-            observations = np.load(observations)
-        except IOError:
-            observations = np.loadtxt(observations)
-
-    if isinstance(gold, str):
-        try:
-            gold = np.load(gold)
-        except IOError:
-            gold = np.loadtxt(gold)
-
-
-    if isinstance(observations, np.ndarray):
-
-        if presolve == None:
-            correlation = quick_correlation(observations, name = "quick_correlation_backup", prefix= prefix)
-        else:
-            correlation = np.load(prefix + presolve)
+    if presolve == None:
+        correlation = quick_correlation(observations, name = "quick_correlation_backup", prefix= prefix)
     else:
-        print "Observations not given as an array!"
-        raise ValueError
+        correlation = np.load(prefix + presolve)
 
 
 
@@ -186,6 +168,11 @@ def main():
         name = sys.argv[4]
     else:
         name = "correlation"
+
+    observations = matrix_assurance(observations)
+    gold = matrix_assurance(gold)
+
+
 
     if os.path.isfile(prefix + "quick_correlation_backup.npy"):
         if chk.check_hash(observations,"quick_correlation_backup.npy", prefix = prefix):

@@ -147,9 +147,9 @@ def main():
     if os.path.isfile(prefix + "header_backup.npy"):
         if not chk.check_hash(target,"header_backup.npy", prefix):
 
-            return translate_header(target, species = species, prefix=prefix, test = test)
+            return translate_header(target, species = species, prefix = prefix, test = test)
     else:
-        return translate_header(target, species = species, prefix=prefix, test = test)
+        return translate_header(target, species = species, prefix = prefix, test = test)
 
 
 

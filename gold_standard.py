@@ -131,6 +131,7 @@ def main():
 
 
     if os.path.isfile(prefix + "gold_network.npy"):
+
         if chk.check_hash(regnetworkweborg, "gold_network.npy", prefix= prefix):
             translate_gold_standard(regnetworkweborg, labels = header, species = species, presolve= "gold_network.npy", prefix = prefix)
         else:

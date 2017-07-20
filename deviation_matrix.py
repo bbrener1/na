@@ -7,6 +7,8 @@ from sklearn.decomposition import PCA
 import scipy.spatial.distance as spt
 import check_hash as chk
 
+from matrix_assurance import *
+
 
 def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix"):
 
@@ -21,6 +23,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
         raise SyntaxError
 
     if presolve != None:
+
         if type(presolve) is str:
             deviation_matrix = np.load(pretag + presolve)
             dropout_mask = np.load(pretag+ "dropout_"+presolve)
@@ -33,14 +36,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
             raise ValueError
 
 
-    if not isinstance(counts,np.ndarray):
 
-        counts = np.load(counts).T
-
-        # try:
-        #     counts = np.loadtxt(counts, skiprows=1, usecols=np.arange(27,)).T
-        # except IOError, ValueError:
-        #     counts = np.load(counts).T
 
     #
     # print counts[:5,:5]
@@ -116,7 +112,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
 
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
-    chk.write_hash(counts,filename +".npy", pretag) 
+    chk.write_hash(counts,filename +".npy", pretag)
 
     output.write(str( deviation_matrix[:10,:10]) + "\n")
 
@@ -146,35 +142,16 @@ def main():
     else:
         filename = "deviation_matrix"
 
-    # else:
-    #
-    #     counts = sys.argv[1]
-    #     if len(sys.argv)>2:
-    #         neighbor_setting = int(sys.argv[2])
-    #     else:
-    #         neighbor_setting = 50
-    #
-    #     if len(sys.argv)>3:
-    #         output = open(sys.argv[3],mode='w')
-    #     else:
-    #         output = sys.stdout
-    #
-    #     if len(sys.argv) > 4:
-    #         filename = sys.argv[4]
-    #     else:
-    #         filename = "deviation_matrix"
 
-    # print "ASSIGNED VALUES TO OPTIONS"
-    #
-    # print os.path.isfile(prefix + "deviation_matrix.npy")
-    #
-    # print os.path.isfile(counts)
+    counts = matrix_assurance(counts)
+
+
 
     if os.path.isfile(prefix + "deviation_matrix.npy"):
         if chk.check_hash(counts,"deviation_matrix.npy",prefix):
-            return compute_deviation_matrix(counts,pretag= prefix, presolve="deviation_matrix.npy")
+            return compute_deviation_matrix(counts, pretag = prefix, presolve="deviation_matrix.npy")
         else:
-            return compute_deviation_matrix(counts,pretag=prefix,output = output, filename = filename)
+            return compute_deviation_matrix(counts, pretag = prefix, output = output, filename = filename)
 
     else:
         return compute_deviation_matrix(counts,pretag=prefix,output = output, filename = filename)
