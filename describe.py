@@ -34,17 +34,17 @@ def describe(deviation_matrix, description = "./description/"):
     plt.savefig(description + "meta_variance.png")
 
     plt.figure()
-    plt.imshow(deviation_matrix,cmap='bwr')
+    plt.imshow(deviation_matrix,cmap='seismic')
     plt.savefig(description + "unsorted_heatmap.png", dpi=300)
 
     plt.figure()
     sorted_matrix = deviation_matrix.T[np.argsort(np.var(deviation_matrix,axis=0))].T
-    plt.imshow(sorted_matrix,cmap='bwr')
+    plt.imshow(sorted_matrix,cmap='seismic')
     plt.savefig(description + "singly_sorted_heatmap.png", dpi=300)
 
     plt.figure()
     sorted1 = deviation_matrix.T
-    plt.imshow(sorted1,cmap='bwr')
+    plt.imshow(sorted1,cmap='seismic')
     plt.savefig(description + "sorted1.png",dpi=300)
 
     print deviation_matrix.shape
@@ -65,14 +65,14 @@ def describe(deviation_matrix, description = "./description/"):
     print sorted2.shape
 
     print "Picked"
-    plt.imshow(sorted2,cmap='bwr')
+    plt.imshow(sorted2,cmap='seismic')
     print "Painted"
     plt.savefig(description + "sorted2.png",dpi=300)
     print "Saved"
 
     plt.figure()
     sorted3 = sorted2.T
-    plt.imshow(sorted3,cmap='bwr')
+    plt.imshow(sorted3,cmap='seismic')
     plt.savefig(description + "sorted3.png",dpi=300)
 
 
