@@ -11,6 +11,8 @@ from compare import *
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
+from matrix_assurance import *
+
 
 
 def quick_correlation(observation_matrix, name = None, prefix = ""):
