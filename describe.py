@@ -61,7 +61,9 @@ def describe(deviation_matrix, description = "./description/"):
     print "Sorted sums"
     indecies2.shape
 
-    sorted2 = sorted1[indecies2]
+    sorted2 = deviation_matrix[indecies2]
+    print sorted2.shape
+
     print "Picked"
     plt.imshow(sorted2,cmap='bwr')
     print "Painted"
