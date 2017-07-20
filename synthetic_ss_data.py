@@ -34,7 +34,7 @@ def synthesize_header(size, species = "mouse", out_format = "10x"):
     total_ids = ens.gene_ids()
     header_list = random.sample(total_ids,size)
     header = [ens.gene_name_of_gene_id(x) for x in header_list]
-    output = open("/synthetic_golden_tests/header.txt", mode = 'w')
+    output = open("synthetic_golden_tests/header.txt", mode = 'w')
 
     if out_format == "10x":
         for gene in header:
@@ -43,9 +43,10 @@ def synthesize_header(size, species = "mouse", out_format = "10x"):
         return header, output
 
     if out_format == "vision":
-        header_str = "\t".join(header_list)
-        output.write(header_str + "\n")
-        return header, output
+        header_str = "\t".join(header_list) + "\n"
+        output.write(header_str)
+        output.close()
+        return header_str
 
 def synthesize_network(genes):
     network = np.identity(genes)*.8
@@ -103,7 +104,7 @@ def degree_histogram(network):
     plt.savefig("synthetic_golden_tests/synthetic_golden_degree_histogram_outbound.png")
 
 
-def simulate_counts(network, cells, outfile = None, initial_counts = None, cycles = 200):
+def simulate_counts(network, cells, header = None, initial_counts = None, cycles = 200):
     if initial_counts == None:
         counts = nprnd.randn(cells,network.shape[0])*50
         # cov_counts = np.copy(counts)
@@ -173,10 +174,14 @@ def simulate_counts(network, cells, outfile = None, initial_counts = None, cycle
     plt.legend()
     plt.savefig("synthetic_golden_tests/divergence_progress.png")
 
-    if outfile == None:
+    if header == None
         np.savetxt("synthetic_golden_tests/synthetic_golden_counts.txt",counts)
     else:
-        counts.tofile(outfile,sep="\t")
+        counts_vision = open("synthetic_golden_counts.txt", mode='w')
+        counts_vision.write(header)
+        for line in counts:
+            counts_vision.write(str(line))
+        counts_vision.close()
     # np.savetxt("synthetic_golden_tests/synthetic_golden_cov_counts.txt",# cov_counts)
 
 
@@ -305,10 +310,10 @@ def main():
         cells = int(sys.argv[2])
         fmt = sys.argv[3]
 
-    header, outfile = synthesize_header(genes, out_format = fmt)
+    header = synthesize_header(genes, out_format = fmt)
     network = synthesize_network(genes)
     degree_histogram(network)
-    simulate_counts(network,cells, outfile,cycles=200)
+    simulate_counts(network,cells, header,cycles=200)
 
 
 
