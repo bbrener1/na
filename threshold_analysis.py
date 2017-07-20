@@ -19,7 +19,7 @@ def quick_correlation(observation_matrix, name = None, prefix = ""):
 
     name = prefix + name
 
-    correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix.T)))
+    correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix)))
     correlation_matrix[correlation_matrix > 10] = 10
     correlation_matrix = correlation_matrix - np.diag(np.diag(correlation_matrix))
 
