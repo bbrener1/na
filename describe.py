@@ -11,7 +11,7 @@ import networkx as nx
 
 
 
-def describe(deviation_matrix,):
+def describe(deviation_matrix):
 
     plt.figure()
     plt.hist(deviation_matrix.flatten().T,bins=21)
@@ -65,3 +65,9 @@ def describe(deviation_matrix,):
     sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
     plt.imshow(sorted_doubly,cmap="seismic")
     plt.savefig("clustered_variance.png")
+
+def main():
+    
+
+if __name__ == "__main__":
+    main()
