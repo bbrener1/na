@@ -47,8 +47,11 @@ def describe(deviation_matrix, description = "./description/"):
     plt.imshow(sorted1,cmap='bwr')
     plt.savefig(description + "sorted1.png",dpi=300)
 
+    print deviation_matrix.shape
+    print sorted1.shape
+
     plt.figure()
-    sorted2 = sorted1[np.argsort(deviation_matrix,axis = 0)]
+    sorted2 = sorted1[np.argsort(deviation_matrix,axis = 1)]
     plt.imshow(sorted2,cmap='bwr')
     plt.savefig(description + "sorted2.png",dpi=300)
 
