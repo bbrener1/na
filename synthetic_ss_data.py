@@ -34,15 +34,18 @@ def synthesize_header(size, species = "mouse", out_format = "10x"):
     total_ids = ens.gene_ids()
     header_list = random.sample(total_ids,size)
     header = [ens.gene_name_of_gene_id(x) for x in header_list]
-    output = open("header.txt", mode = 'w')
+    output = open("/synthetic_golden_tests/header.txt", mode = 'w')
 
     if out_format == "10x":
         for gene in header:
             output.write(gene + "\t")
         output.close()
+        return header, output
 
-
-    return header
+    if out_format == "vision":
+        header_str = "\t".join(header_list)
+        output.write(header_str + "\n")
+        return header, output
 
 def synthesize_network(genes):
     network = np.identity(genes)*.8
@@ -100,7 +103,7 @@ def degree_histogram(network):
     plt.savefig("synthetic_golden_tests/synthetic_golden_degree_histogram_outbound.png")
 
 
-def simulate_counts(network, cells, initial_counts = None, cycles = 200):
+def simulate_counts(network, cells, outfile = None, initial_counts = None, cycles = 200):
     if initial_counts == None:
         counts = nprnd.randn(cells,network.shape[0])*50
         # cov_counts = np.copy(counts)
@@ -145,7 +148,7 @@ def simulate_counts(network, cells, initial_counts = None, cycles = 200):
                         print counts[j]
 
 
-        #     counts = np.reshape(nprnd.multivariate_normal(np.dot(counts,network*20).flatten(),np.identity(network.shape[0]*cells)*10),(cells,network.shape[0]))
+                        #     counts = np.reshape(nprnd.multivariate_normal(np.dot(counts,network*20).flatten(),np.identity(network.shape[0]*cells)*10),(cells,network.shape[0]))
             counts[counts < 0] = 0
             counts[counts > 100] = 100
 
@@ -170,7 +173,10 @@ def simulate_counts(network, cells, initial_counts = None, cycles = 200):
     plt.legend()
     plt.savefig("synthetic_golden_tests/divergence_progress.png")
 
-    np.savetxt("synthetic_golden_tests/synthetic_golden_counts.txt",counts)
+    if outfile == None:
+        np.savetxt("synthetic_golden_tests/synthetic_golden_counts.txt",counts)
+    else:
+        counts.tofile(outfile,sep="\t")
     # np.savetxt("synthetic_golden_tests/synthetic_golden_cov_counts.txt",# cov_counts)
 
 
@@ -287,14 +293,24 @@ def network_frame(connectivity_matrix, counts, writer, figure, layout):
 
 
 
-if len(sys.argv) <= 1:
-    genes = 100
-    cells = 100
-else:
-    genes = int(sys.argv[1])
-    cells = int(sys.argv[2])
 
-synthesize_header(genes)
-network = synthesize_network(genes)
-degree_histogram(network)
-simulate_counts(network,cells,cycles=200)
+
+def main():
+
+    if len(sys.argv) <= 1:
+        genes = 100
+        cells = 100
+    else:
+        genes = int(sys.argv[1])
+        cells = int(sys.argv[2])
+        fmt = sys.argv[3]
+
+    header, outfile = synthesize_header(genes, out_format = fmt)
+    network = synthesize_network(genes)
+    degree_histogram(network)
+    simulate_counts(network,cells, outfile,cycles=200)
+
+
+
+if __name__ == "__main__":
+    main()
