@@ -18,6 +18,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
         output = open(output,mode='w')
 
 
+
     if not isinstance(output,file):
         print "OUTPUT OF DEVIATION_MATRIX.PY, FUNCTION COMPUTE_DEVIATION_MATRIX IS NOT A FILE"
         raise SyntaxError
@@ -88,7 +89,8 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
         # print counts[np.argsort(distance_matrix[i]) < neighbor_setting]
         # print np.mean(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
         neighbor_mean_matrix[i] = np.mean(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
-        std_dev_matrix = np.std(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
+        std_dev_matrix[i] = np.std(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
+
         if i%100 == 0:
             output.write(str(i) + "\n")
 
@@ -112,6 +114,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
 
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
+    np.save( pretag + "std_dev_" + filename, std_dev_matrix)
     chk.write_hash(counts,filename +".npy", pretag)
 
     output.write(str( deviation_matrix[:10,:10]) + "\n")
@@ -124,6 +127,8 @@ def simple(folder):
     compute_deviation_matrix(counts, neighbor_setting = 50, pretag=folder, filename= "deviation_matrix")
 
 def main():
+
+    print "Deviation matrix"
 
     prefix = sys.argv[1]
 
@@ -145,7 +150,7 @@ def main():
 
     counts = matrix_assurance(counts)
 
-
+    print "Deviation matrix defaults initialized"
 
     if os.path.isfile(prefix + "deviation_matrix.npy"):
         if chk.check_hash(counts,"deviation_matrix.npy",prefix):
