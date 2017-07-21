@@ -19,7 +19,7 @@ def quick_correlation(observation_matrix, name = None, prefix = ""):
 
     name = prefix + name
 
-    correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix)))
+    correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix.T)))
     correlation_matrix[correlation_matrix > 10] = 10
     correlation_matrix = correlation_matrix - np.diag(np.diag(correlation_matrix))
 
@@ -66,6 +66,8 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
     precision = np.zeros(len(scroll))
     recall = np.zeros(len(scroll))
 
+    enrichment = np.zeros(len(scroll))
+
     for j, tau in enumerate(scroll):
         print tau
         # degree_ratings = np.zeros(observation_matrix.shape[1])
@@ -82,7 +84,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
         compare(connectivity,gold)
 
-        true_pos[j],false_pos[j],precision[j],recall[j] = restrictive_compare(connectivity,gold)
+        true_pos[j],false_pos[j],precision[j],recall[j], enrichment[j] = restrictive_compare(connectivity,gold)
 
 
 
@@ -123,8 +125,8 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         # print tau
         r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
 
-        if tau == .2:
-            plot_edge_certainty(observations,connectivity)
+        # if tau == .2:
+        #     plot_edge_certainty(observations,connectivity)
     print r2_stat
 
     plt.figure()
@@ -150,6 +152,10 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
     plt.ylabel("Precision (Rate of true positives vs all positives)")
     plt.savefig(prefix + "pr_curve.png")
 
+    plt.figure()
+    plt.plot(scroll,enrichment)
+    plt.savefig(prefix + "enrichment.png")
+
     return true_pos, false_pos
 
 def main():
@@ -173,16 +179,17 @@ def main():
 
     observations = matrix_assurance(observations)
     gold = matrix_assurance(gold)
+    custom_scroll = map(lambda x: float(x)*.01,range(1,50,1))
 
 
 
     if os.path.isfile(prefix + "quick_correlation_backup.npy"):
         if chk.check_hash(observations,"quick_correlation_backup.npy", prefix = prefix):
-            return quick_threshold_analysis(observations, gold, presolve="quick_correlation_backup.npy", name = name, prefix = prefix)
+            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="quick_correlation_backup.npy", name = name, prefix = prefix)
         else:
-            return quick_threshold_analysis(observations, gold, name = name, prefix = prefix)
+            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, name = name, prefix = prefix)
     else:
-        return quick_threshold_analysis(observations, gold, name = name, prefix = prefix)
+        return quick_threshold_analysis(observations, gold, scroll = custom_scroll, name = name, prefix = prefix)
 
 
 if __name__ == "__main__":
