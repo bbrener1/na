@@ -58,7 +58,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
 
     output.write(str(dropout_mask.shape) + "\n")
 
-    counts = counts[dropout_mask].T
+    counts = counts[dropout_mask]
 
     #
     # distance_matrix = np.zeros((counts.shape[0],counts.shape[0]))
