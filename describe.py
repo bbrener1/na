@@ -87,7 +87,13 @@ def describe(deviation_matrix, description = "./description/"):
     sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
     sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
     plt.imshow(sorted_doubly,cmap="seismic")
-    plt.savefig(description + "clustered_variance.png")
+    plt.savefig(description + "clustered_variance.png", dpi=300)
+
+    strange = sorted_doubly[:,-50:]
+    np.savetxt(description+ "strange.txt",strange)
+    np.savetxt(description + "indecies_strange.txt",np.argsort(np.var(sorted_singly,axis=0)))
+
+
 
 def main():
 
