@@ -13,7 +13,21 @@ from sklearn.metrics import r2_score
 
 from matrix_assurance import *
 
-
+def plot_edge_certainty(correlation,connectivity,filename):
+    fig = plt.figure()
+    cm = plt.cm.get_cmap('magma')
+    degrees = np.sum(connectivity, axis=1)
+    x = np.repeat(degrees,degrees.shape[0])
+    y = np.tile(degrees,degrees.shape[0])
+    print "EDGE CERTAINTY DEBUG"
+    print connectivity.shape
+    print correlation.shape
+    print filename
+    ax = fig.add_subplot(111)
+    # ax.set_yscale('log')
+    # ax.set_xscale('log')
+    ax.scatter(x.flatten()[connectivity.flatten()],y.flatten()[connectivity.flatten()], marker='x', alpha = .3, c=correlation.flatten()[connectivity.flatten()],s=1, cmap=cm)
+    plt.savefig(filename,dpi=300)
 
 def quick_correlation(observation_matrix, name = None, prefix = ""):
 
@@ -125,8 +139,8 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         # print tau
         r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
 
-        if tau == .2:
-            plot_edge_certainty(observations,connectivity)
+        if tau == .13:
+            plot_edge_certainty(correlation,connectivity, prefix+"edge_certainty.png")
     print r2_stat
 
     plt.figure()
