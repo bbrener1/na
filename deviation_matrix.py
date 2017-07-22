@@ -133,17 +133,23 @@ def main():
     prefix = sys.argv[1]
 
     if len(sys.argv)>2:
-        counts = np.loadtxt(sys.argv[2]).T
+        neighbors = int(sys.argv[2])
+    else:
+        neighbors = 50
+
+
+    if len(sys.argv)>3:
+        counts = np.loadtxt(sys.argv[3]).T
     else:
         counts = prefix + "counts.npy"
 
-    if len(sys.argv)>3:
-        output = sys.argv[3]
+    if len(sys.argv)>4:
+        output = sys.argv[4]
     else:
         output = prefix + "dev_matrix_log"
 
-    if len(sys.argv)>4:
-        filename = sys.argv[4]
+    if len(sys.argv)>5:
+        filename = sys.argv[5]
     else:
         filename = "deviation_matrix"
 
@@ -154,12 +160,12 @@ def main():
 
     if os.path.isfile(prefix + "deviation_matrix.npy"):
         if chk.check_hash(counts,"deviation_matrix.npy",prefix):
-            return compute_deviation_matrix(counts, pretag = prefix, presolve="deviation_matrix.npy")
+            return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="deviation_matrix.npy")
         else:
-            return compute_deviation_matrix(counts, pretag = prefix, output = output, filename = filename)
+            return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
 
     else:
-        return compute_deviation_matrix(counts,pretag=prefix,output = output, filename = filename)
+        return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
 
 
         # "Invalid pretag probably? Problem in main of deviation_matrix.py"

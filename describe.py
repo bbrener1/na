@@ -76,7 +76,7 @@ def describe(deviation_matrix, description = "./description/"):
     plt.savefig(description + "doubly_sorted.png",dpi=300)
 
 
-    cell_clustering = AgglomerativeClustering(n_clusters=15)
+    cell_clustering = AgglomerativeClustering(n_clusters=5)
     plt.figure()
     sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
     sorted_doubly = sorted_singly.T[np.argsort(np.mean(sorted_singly,axis=0))].T
@@ -88,6 +88,13 @@ def describe(deviation_matrix, description = "./description/"):
     sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
     plt.imshow(sorted_doubly,cmap="seismic")
     plt.savefig(description + "clustered_variance.png", dpi=300)
+
+    gene_clustering = AgglomerativeClustering(n_clusters=3, linkage='average')
+    plt.figure()
+    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
+    sorted_doubly = sorted_singly.T[np.argsort(gene_clustering.fit_predict(sorted_singly.T))]
+    plt.imshow(sorted_doubly.T, cmap='seismic')
+    plt.savefig(description + "doubly_clustered.png",dpi=300)
 
     strange = sorted_doubly[:,-50:]
     np.savetxt(description+ "strange.txt",strange)

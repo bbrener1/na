@@ -125,8 +125,8 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         # print tau
         r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
 
-        # if tau == .2:
-        #     plot_edge_certainty(observations,connectivity)
+        if tau == .2:
+            plot_edge_certainty(observations,connectivity)
     print r2_stat
 
     plt.figure()
