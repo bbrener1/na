@@ -6,11 +6,17 @@ import numpy as np
 from sklearn.decomposition import PCA
 import scipy.spatial.distance as spt
 import check_hash as chk
+import itertools
+import scipy.stats as st
+
+import matplotlib
+matplotlib.use('agg')
+from matplotlib import pyplot as plt
 
 from matrix_assurance import *
 
 
-def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix"):
+def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
 
     if output == None:
         output = sys.stdout
@@ -78,27 +84,60 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
     output.write(str(distance_matrix[:10,:10]) + "\n")
     output.write(str(distance_matrix.shape) + "\n")
 
-    neighbor_mean_matrix = np.zeros(counts.shape)
-    std_dev_matrix = np.zeros(counts.shape)
+    folds = list(itertools.combinations(range(fold),int(fold/2)+1))
+
+    neighbor_mean_matrix = np.zeros((counts.shape[0],counts.shape[1],len(folds)))
+    std_dev_matrix = np.zeros((counts.shape[0],counts.shape[1],len(folds)))
 
     output.write("Progress of deviation matrix calculation:\n")
-    for i in range(neighbor_mean_matrix.shape[0]):
-        # output.write(str(distance_matrix[i]) + "\n")
-        # print np.argsort(distance_matrix[i])
-        # print np.argsort(distance_matrix[i]) < neighbor_setting
-        # print counts[np.argsort(distance_matrix[i]) < neighbor_setting]
-        # print np.mean(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
-        neighbor_mean_matrix[i] = np.mean(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
-        std_dev_matrix[i] = np.std(counts[np.argsort(distance_matrix[i]) < neighbor_setting],axis=0)
+
+    for i, row in enumerate(neighbor_mean_matrix):
+
+        integer_mask = np.random.randint(fold, size=neighbor_setting)
+
+        neighborhood = counts[np.argsort(distance_matrix[i]) < neighbor_setting]
+
+        for j, cycle in enumerate(folds):
+
+            fold_mask = np.zeros(neighborhood.shape[0],dtype=bool)
+            for element in cycle:
+                fold_mask = np.logical_or(fold_mask,integer_mask == element)
+
+            # print cycle
+            # print integer_mask
+            # print fold_mask
+            # print neighbor_mean_matrix.shape
+            # print std_dev_matrix.shape
+            # print np.mean(neighborhood[fold_mask],axis=0)
+
+            neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+
+            std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
+
+
 
         if i%100 == 0:
             output.write(str(i) + "\n")
 
+    median_mean_matrix = np.nan_to_num(np.median(neighbor_mean_matrix, axis = 2))
+    median_std_dev_matrix = np.nan_to_num(np.median(std_dev_matrix, axis = 2))
+
+    qc_array = np.nan_to_num(st.variation(neighbor_mean_matrix, axis = 2).flatten())
+
+    # print "QC array shape"
+    # print qc_array.shape
+    # print np.max(qc_array)
+    # print np.max(median_mean_matrix)
+    # print np.min(median_mean_matrix)
+
+    plt.figure()
+    plt.hist(qc_array)
+    plt.savefig(pretag + "coef_var_fold.png")
 
     output.write("Neighbor mean matrix content:\n")
     output.write(str(neighbor_mean_matrix[:10,:10]) + "\n")
 
-    deviation_matrix = np.divide((counts-neighbor_mean_matrix),std_dev_matrix)
+    deviation_matrix = np.divide((counts-median_mean_matrix),median_std_dev_matrix)
 
     output.write("Minimum in deviation matrix:\n")
     output.write(str( np.amin(deviation_matrix.flatten())) + "\n")
@@ -124,7 +163,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
 
 def simple(folder):
     counts = np.load(folder+"counts.npy")
-    compute_deviation_matrix(counts, neighbor_setting = 50, pretag=folder, filename= "deviation_matrix")
+    folded_deviation_matrix(counts, neighbor_setting = 50, pretag=folder, filename= "deviation_matrix")
 
 def main():
 
@@ -151,24 +190,24 @@ def main():
     if len(sys.argv)>5:
         filename = sys.argv[5]
     else:
-        filename = "deviation_matrix"
+        filename = "folded_dev_matrix"
 
 
     counts = matrix_assurance(counts)
 
     print "Deviation matrix defaults initialized"
 
-    if os.path.isfile(prefix + "deviation_matrix.npy"):
-        if chk.check_hash(counts,"deviation_matrix.npy",prefix):
-            return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="deviation_matrix.npy")
+    if os.path.isfile(prefix + "folded_dev_matrix.npy"):
+        if chk.check_hash(counts,"folded_dev_matrix.npy",prefix):
+            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="folded_dev_matrix.npy")
         else:
-            return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
+            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
 
     else:
-        return compute_deviation_matrix(counts, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
+        return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
 
 
-        # "Invalid pretag probably? Problem in main of deviation_matrix.py"
+        # "Invalid pretag probably? Problem in main of folded_dev_matrix.py"
         # raise ValueError
 
 

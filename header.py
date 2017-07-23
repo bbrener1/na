@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import pyensembl as en
+import scipy.io
 
 import os
 
@@ -34,10 +35,12 @@ def translate_10x_header(input_file, species="mouse", prefix = "", test = False)
         for i in range(len(header)):
             try:
                 header[i] = ens.gene_name_of_gene_id(header[i])
-            except ValueError:
+            except ValueError as ex:
+                print ex.message
                 error_list.append(header[i])
                 header[i] = "error"
                 error_count += 1
+                # return 0
     else:
         for i in range(len(header)):
             header[i] = ens.gene_name_of_gene_id(header[i])

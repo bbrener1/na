@@ -67,6 +67,8 @@ def restrictive_compare(network1,network2,output=None):
     precision = intersect/n1_edges
     recall = intersect/n2_edges
 
-    return true_positive,false_positive, precision, recall
+    enrichment = recall / (n1_edges/possible)
+
+    return true_positive,false_positive, precision, recall, enrichment
 
     # output.write(str(intersect) + " edges shared between the networks, (" + str(np.sum(intersect)/n2_edges) + ")\n")

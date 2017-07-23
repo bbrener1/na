@@ -20,7 +20,7 @@ def describe(deviation_matrix, description = "./description/"):
 
     plt.figure()
     plt.hist(deviation_matrix.flatten().T,bins=21)
-    plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*np.sum(deviation_matrix>0))
+    plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*deviation_matrix.shape[0]*deviation_matrix.shape[1])
     plt.title("Frequency of Deviation From Neighbors (Std Deviations)")
     plt.ylabel("Number of Instances")
     plt.xlabel("Deviation (Standard Deviations)")
@@ -42,52 +42,65 @@ def describe(deviation_matrix, description = "./description/"):
     plt.imshow(sorted_matrix,cmap='seismic')
     plt.savefig(description + "singly_sorted_heatmap.png", dpi=300)
 
-    plt.figure()
-    sorted1 = deviation_matrix.T
-    plt.imshow(sorted1,cmap='seismic')
-    plt.savefig(description + "sorted1.png",dpi=300)
-
-    print deviation_matrix.shape
-    print sorted1.shape
-
-    plt.figure()
-    print "Starting Indecies"
-    indecies = np.argsort(deviation_matrix,axis = 1)
-    print "Sorted"
-    print indecies.shape
+    # plt.figure()
+    # sorted1 = deviation_matrix.T
+    # plt.imshow(sorted1,cmap='seismic')
+    # plt.savefig(description + "sorted1.png",dpi=300)
+    #
+    # print deviation_matrix.shape
+    # print sorted1.shape
+    #
+    # plt.figure()
+    # print "Starting Indecies"
+    # indecies = np.argsort(deviation_matrix,axis = 1)
+    # print "Sorted"
+    # print indecies.shape
 
     indecies2 = np.argsort(np.sum(deviation_matrix,axis = 1))
 
-    print "Sorted sums"
-    indecies2.shape
+    # print "Sorted sums"
+    # indecies2.shape
 
     sorted2 = deviation_matrix[indecies2]
-    print sorted2.shape
-
-    print "Picked"
-    plt.imshow(sorted2,cmap='seismic')
-    print "Painted"
-    plt.savefig(description + "sorted2.png",dpi=300)
-    print "Saved"
+    # print sorted2.shape
+    #
+    # print "Picked"
+    # plt.imshow(sorted2,cmap='seismic')
+    # print "Painted"
+    # plt.savefig(description + "sorted2.png",dpi=300)
+    # print "Saved"
 
     plt.figure()
     sorted3 = sorted2.T
     plt.imshow(sorted3,cmap='seismic')
-    plt.savefig(description + "sorted3.png",dpi=300)
+    plt.savefig(description + "doubly_sorted.png",dpi=300)
 
 
-    cell_clustering = AgglomerativeClustering(n_clusters=15)
+    cell_clustering = AgglomerativeClustering(n_clusters=5)
     plt.figure()
-    sorted_singly = deviation_matrix[cell_clustering.fit_predict(deviation_matrix)]
+    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
     sorted_doubly = sorted_singly.T[np.argsort(np.mean(sorted_singly,axis=0))].T
     plt.imshow(sorted_doubly,cmap="seismic")
     plt.savefig(description + "clustered.png", dpi=300)
 
     plt.figure()
-    sorted_singly = deviation_matrix[cell_clustering.fit_predict(deviation_matrix)]
+    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
     sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
     plt.imshow(sorted_doubly,cmap="seismic")
-    plt.savefig(description + "clustered_variance.png")
+    plt.savefig(description + "clustered_variance.png", dpi=300)
+
+    gene_clustering = AgglomerativeClustering(n_clusters=3, linkage='average')
+    plt.figure()
+    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
+    sorted_doubly = sorted_singly.T[np.argsort(gene_clustering.fit_predict(sorted_singly.T))]
+    plt.imshow(sorted_doubly.T, cmap='seismic')
+    plt.savefig(description + "doubly_clustered.png",dpi=300)
+
+    strange = sorted_doubly[:,-50:]
+    np.savetxt(description+ "strange.txt",strange)
+    np.savetxt(description + "indecies_strange.txt",np.argsort(np.var(sorted_singly,axis=0)))
+
+
 
 def main():
 
