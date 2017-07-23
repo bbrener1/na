@@ -10,6 +10,10 @@ import check_hash as chk
 from compare import *
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
+import scipy.stats as st
+
+
+import itertools
 
 from matrix_assurance import *
 
@@ -34,7 +38,6 @@ def quick_correlation(observation_matrix, name = None, prefix = ""):
     name = prefix + name
 
     correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix.T)))
-    correlation_matrix[correlation_matrix > 10] = 10
     correlation_matrix = correlation_matrix - np.diag(np.diag(correlation_matrix))
 
     if name != None:
@@ -56,6 +59,46 @@ def quick_correlation(observation_matrix, name = None, prefix = ""):
 
     return correlation_matrix
 
+def folded_correlation(observation_matrix, name = None, prefix = "", fold_number = 5):
+
+    name = prefix + name
+    folds = list(itertools.combinations(range(fold_number),int(fold_number/2)+1))
+
+    integer_mask = np.random.randint(fold_number, size = observation_matrix.shape[0])
+
+    correlation_matrix = np.zeros((len(folds),observation_matrix.shape[1],observation_matrix.shape[1]))
+
+    for i, fold in enumerate(folds):
+        fold_mask = np.zeros(observation_matrix.shape[0],dtype=bool)
+        for element in fold:
+            fold_mask = np.logical_or(fold_mask,integer_mask == element)
+
+        correlation_matrix[i] = np.abs(np.nan_to_num(np.corrcoef(observation_matrix[fold_mask].T)))
+        correlation_matrix[i] = correlation_matrix[i] - np.diag(np.diag(correlation_matrix[i]))
+
+    consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
+
+    # consensus_correlation = np.median(correlation_matrix, axis = 0)
+
+    qc_array = np.nan_to_num(st.variation(correlation_matrix, axis = 0).flatten())
+
+    print "QC array shape"
+    print qc_array.shape
+    print np.max(qc_array)
+    print np.max(correlation_matrix)
+    print np.max(consensus_correlation)
+    print np.min(consensus_correlation)
+
+    plt.figure()
+    plt.hist(qc_array)
+    plt.savefig(prefix + "corr_var_fold.png")
+
+    if name != None:
+        np.save(prefix + "folded_correlation_backup", np.nan_to_num(correlation_matrix))
+        chk.write_hash(observation_matrix, "folded_correlation_backup.npy", prefix)
+
+
+    return consensus_correlation
 
 def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, name = "", prefix = ""):
 
@@ -65,10 +108,11 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         scroll = map(lambda x: float(x)*.01,range(1,96,5))
 
     if presolve == None:
-        correlation = quick_correlation(observations, name = "folded_correlation_backup", prefix= prefix)
+        correlation = folded_correlation(observations, name = "folded_correlation_backup", prefix= prefix)
     else:
         correlation = np.load(prefix + presolve)
 
+    print correlation.shape
 
 
     r2_stat = np.zeros(len(scroll))
@@ -197,8 +241,8 @@ def main():
 
 
 
-    if os.path.isfile(prefix + "quick_correlation_backup.npy"):
-        if chk.check_hash(observations,"quick_correlation_backup.npy", prefix = prefix):
+    if os.path.isfile(prefix + "folded_correlation_backup.npy"):
+        if chk.check_hash(observations,"folded_correlation_backup.npy", prefix = prefix):
             return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="folded_correlation_backup.npy", name = name, prefix = prefix)
         else:
             return quick_threshold_analysis(observations, gold, scroll = custom_scroll, name = name, prefix = prefix)
