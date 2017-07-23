@@ -118,6 +118,7 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
 
         if i%100 == 0:
             output.write(str(i) + "\n")
+            print i
 
     median_mean_matrix = np.nan_to_num(np.median(neighbor_mean_matrix, axis = 2))
     median_std_dev_matrix = np.nan_to_num(np.median(std_dev_matrix, axis = 2))
