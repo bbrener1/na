@@ -54,7 +54,7 @@ def translate_10x_header(input_file, species="mouse", prefix = "", test = False)
     print error_list[:10]
 
     counts = scipy.io.mmread("/".join(in_data.name.split("/")[:-1])+"/matrix.mtx").todense()
-    np.save(prefix+"counts",counts)
+    np.save(prefix+"counts",counts.T)
 
     try:
         float(header[0])

@@ -73,8 +73,12 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
         for element in fold:
             fold_mask = np.logical_or(fold_mask,integer_mask == element)
 
+        print i
+
         correlation_matrix[i] = np.abs(np.nan_to_num(np.corrcoef(observation_matrix[fold_mask].T)))
         correlation_matrix[i] = correlation_matrix[i] - np.diag(np.diag(correlation_matrix[i]))
+
+        print i
 
     consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
 
