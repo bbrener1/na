@@ -65,7 +65,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         scroll = map(lambda x: float(x)*.01,range(1,96,5))
 
     if presolve == None:
-        correlation = quick_correlation(observations, name = "folded_correlation_backup", prefix= prefix)
+        correlation = quick_correlation(observations, name = "quick_correlation_backup", prefix= prefix)
     else:
         correlation = np.load(prefix + presolve)
 
@@ -179,7 +179,7 @@ def main():
     if len(sys.argv)> 2:
         observations = sys.argv[2]
     else:
-        observations = prefix + "folded_dev_matrix.npy"
+        observations = prefix + "deviation_matrix.npy"
 
     if len(sys.argv)> 3:
         gold = sys.argv[3]
@@ -199,7 +199,7 @@ def main():
 
     if os.path.isfile(prefix + "quick_correlation_backup.npy"):
         if chk.check_hash(observations,"quick_correlation_backup.npy", prefix = prefix):
-            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="folded_correlation_backup.npy", name = name, prefix = prefix)
+            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="quick_correlation_backup.npy", name = name, prefix = prefix)
         else:
             return quick_threshold_analysis(observations, gold, scroll = custom_scroll, name = name, prefix = prefix)
     else:
