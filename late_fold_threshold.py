@@ -17,47 +17,6 @@ import itertools
 
 from matrix_assurance import *
 
-def plot_edge_certainty(correlation,connectivity,filename):
-    fig = plt.figure()
-    cm = plt.cm.get_cmap('magma')
-    degrees = np.sum(connectivity, axis=1)
-    x = np.repeat(degrees,degrees.shape[0])
-    y = np.tile(degrees,degrees.shape[0])
-    print "EDGE CERTAINTY DEBUG"
-    print connectivity.shape
-    print correlation.shape
-    print filename
-    ax = fig.add_subplot(111)
-    # ax.set_yscale('log')
-    # ax.set_xscale('log')
-    ax.scatter(x.flatten()[connectivity.flatten()],y.flatten()[connectivity.flatten()], marker='x', alpha = .3, c=correlation.flatten()[connectivity.flatten()],s=1, cmap=cm)
-    plt.savefig(filename,dpi=300)
-
-def quick_correlation(observation_matrix, name = None, prefix = ""):
-
-    name = prefix + name
-
-    correlation_matrix = np.abs(np.nan_to_num(np.corrcoef(observation_matrix.T)))
-    correlation_matrix = correlation_matrix - np.diag(np.diag(correlation_matrix))
-
-    if name != None:
-        np.save(prefix + "quick_correlation_backup", np.nan_to_num(correlation_matrix))
-        chk.write_hash(observation_matrix, "quick_correlation_backup.npy", prefix)
-
-
-
-    print "Quick Correlation Debug"
-    print np.sum(correlation_matrix)
-    print correlation_matrix.shape
-    print "Non-zero edges: "
-    print np.sum(correlation_matrix > 0)
-
-
-    plt.figure()
-    plt.hist(correlation_matrix.flatten(), bins=20, log=True)
-    plt.savefig(prefix + "quick_correlation_debug.png")
-
-    return correlation_matrix
 
 def folded_correlation(observation_matrix, name = None, prefix = "", fold_number = 5):
 
@@ -80,10 +39,6 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
         print i
 
-    print "Computing consensus"
-
-    consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
-
     print "Computing the QC array"
 
     # consensus_correlation = np.median(correlation_matrix, axis = 0)
@@ -94,19 +49,19 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     print qc_array.shape
     print np.max(qc_array)
     print np.max(correlation_matrix)
-    print np.max(consensus_correlation)
-    print np.min(consensus_correlation)
+    # print np.max(consensus_correlation)
+    # print np.min(consensus_correlation)
 
     plt.figure()
     plt.hist(qc_array)
     plt.savefig(prefix + "corr_var_fold.png")
 
     if name != None:
-        np.save(prefix + "folded_correlation_backup", np.nan_to_num(correlation_matrix))
-        chk.write_hash(observation_matrix, "folded_correlation_backup.npy", prefix)
+        np.save(prefix + "late_folded_backup", np.nan_to_num(correlation_matrix))
+        chk.write_hash(observation_matrix, "late_folded_backup.npy", prefix)
 
 
-    return consensus_correlation
+    return correlation_matrix
 
 def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, name = "", prefix = ""):
 
@@ -116,7 +71,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         scroll = map(lambda x: float(x)*.01,range(1,96,5))
 
     if presolve == None:
-        correlation = folded_correlation(observations, name = "folded_correlation_backup", prefix= prefix)
+        correlation = folded_correlation(observations, name = "late_folded_backup_backup", prefix= prefix)
     else:
         correlation = np.load(prefix + presolve)
 
@@ -139,14 +94,14 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         # degree_ratings = np.zeros(observation_matrix.shape[1])
         # for i, gene in enumerate(correlation_strength_matrix):
         #     degree_ratings[i] = np.sum(gene > tau)
+
+        connectivity = np.sum(correlation > tau, axis = 0) > 3
+
         degree_ratings = np.sum(correlation > tau, axis=1)
         gold_degree_ratings = np.sum(gold, axis=1)
 
         print "Unconnected nodes: " + str(np.sum(degree_ratings.flatten() < tau))
         print "Unconnected gold standard nodes:" + str(np.sum(gold_degree_ratings.flatten() < 2))
-
-
-        connectivity = correlation > tau
 
         compare(connectivity,gold)
 
@@ -200,6 +155,8 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
     degree_ratings = np.sum(correlation > tau, axis=1)
     degree_mask = np.argsort(degree_ratings) > (degree_ratings.shape[0]-200)
     np.save("TF_degree_mask",degree_mask)
+
+
     plt.figure()
     plt.plot(scroll,r2_stat, label = name)
     plt.ylabel("Concordance To The Small World Assumption (R^2)")
@@ -254,9 +211,9 @@ def main():
 
 
 
-    if os.path.isfile(prefix + "folded_correlation_backup.npy"):
-        if chk.check_hash(observations,"folded_correlation_backup.npy", prefix = prefix):
-            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="folded_correlation_backup.npy", name = name, prefix = prefix)
+    if os.path.isfile(prefix + "late_folded_backup.npy"):
+        if chk.check_hash(observations,"late_folded_backup.npy", prefix = prefix):
+            return quick_threshold_analysis(observations, gold, scroll = custom_scroll, presolve="late_folded_backup.npy", name = name, prefix = prefix)
         else:
             return quick_threshold_analysis(observations, gold, scroll = custom_scroll, name = name, prefix = prefix)
     else:
