@@ -47,7 +47,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
     output.write("Deviation Matrix counts shape:\n")
     output.write(str(counts.shape) + "\n")
 
-    int_sum = np.squeeze(np.asarray(np.sum(counts.T,axis=0)))
+    int_sum = np.squeeze(np.asarray(np.sum(counts,axis=0)))
 
     output.write("Dropout mask shape, content, sum, and converted sum\n")
     output.write(str(int_sum.shape) + "\n")

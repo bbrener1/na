@@ -80,7 +80,11 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
         print i
 
+    print "Computing consensus"
+
     consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
+
+    print "Computing the QC array"
 
     # consensus_correlation = np.median(correlation_matrix, axis = 0)
 
@@ -189,7 +193,13 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
         if tau == .13:
             plot_edge_certainty(correlation,connectivity, prefix+"edge_certainty.png")
+
     print r2_stat
+
+    enrichment_optimum = enrichment[:22].max()
+    degree_ratings = np.sum(correlation > tau, axis=1)
+    degree_mask = np.argsort(degree_ratings) > (degree_ratings.shape[0]-200)
+    np.save("TF_degree_mask",degree_mask)
 
     plt.figure()
     plt.plot(scroll,r2_stat, label = name)
