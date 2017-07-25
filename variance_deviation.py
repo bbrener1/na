@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 
 def variance_discrepancy(deviation_matrix, counts, std_devs, labels, prefix = ""):
     count_variance = np.var(counts, axis=0)
+
     deviation_variance = np.var(deviation_matrix, axis=0)
 
     mean_abs_deviation = np.mean(np.abs(deviation_matrix), axis = 0)
@@ -21,6 +22,8 @@ def variance_discrepancy(deviation_matrix, counts, std_devs, labels, prefix = ""
     index_mask = np.argsort(variance_index) > len(variance_index) - 200
     abs_mask = np.argsort(mean_abs_deviation) > len(mean_abs_deviation) - 200
     real_mask = np.argsort(np.divide(np.std(counts,axis=0),np.mean(std_devs,axis=0))) > counts.shape[0] - 200
+
+
 
     plt.figure()
     plt.bar(np.arange(len(deviation_variance)),np.sort(deviation_variance))
