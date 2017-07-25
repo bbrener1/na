@@ -110,7 +110,9 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
             # print std_dev_matrix.shape
             # print np.mean(neighborhood[fold_mask],axis=0)
 
-            neighbor_mean_matrix[i,:,j] = np.sum(neighborhood[fold_mask] > 2.5 ,axis=0) > 5
+            neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+
+            std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
 
             # std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
 
@@ -120,8 +122,13 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
             output.write(str(i) + "\n")
             print i
 
-    median_mean_matrix = np.nan_to_num(np.median(neighbor_mean_matrix, axis = 2))
-    median_std_dev_matrix = np.nan_to_num(np.median(std_dev_matrix, axis = 2))
+    deviation_matrix = np.zeros(neighbor_mean_matrix.shape)
+
+    for i in range(len(folds)):
+        deviation_matrix[i] = np.divide((counts-neighbor_mean_matrix[i]),std_dev_matrix[i])
+
+    deviation_matrix = np.sum(deviation_matrix > 2.5, axis = 2) > 5
+
 
     qc_array = np.nan_to_num(st.variation(neighbor_mean_matrix, axis = 2).flatten())
 
@@ -138,7 +145,6 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
     output.write("Neighbor mean matrix content:\n")
     output.write(str(neighbor_mean_matrix[:10,:10]) + "\n")
 
-    deviation_matrix = np.divide((counts-median_mean_matrix),median_std_dev_matrix)
 
     output.write("Minimum in deviation matrix:\n")
     output.write(str( np.amin(deviation_matrix.flatten())) + "\n")
@@ -191,16 +197,16 @@ def main():
     if len(sys.argv)>5:
         filename = sys.argv[5]
     else:
-        filename = "folded_dev_matrix"
+        filename = "cons_dev_matrix"
 
 
     counts = matrix_assurance(counts)
 
     print "Deviation matrix defaults initialized"
 
-    if os.path.isfile(prefix + "folded_dev_matrix.npy"):
-        if chk.check_hash(counts,"folded_dev_matrix.npy",prefix):
-            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="folded_dev_matrix.npy")
+    if os.path.isfile(prefix + "cons_dev_matrix.npy"):
+        if chk.check_hash(counts,"cons_dev_matrix.npy",prefix):
+            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="cons_dev_matrix.npy")
         else:
             return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
 
@@ -208,7 +214,7 @@ def main():
         return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
 
 
-        # "Invalid pretag probably? Problem in main of folded_dev_matrix.py"
+        # "Invalid pretag probably? Problem in main of cons_dev_matrix.py"
         # raise ValueError
 
 
