@@ -110,7 +110,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         # for i, gene in enumerate(correlation_strength_matrix):
         #     degree_ratings[i] = np.sum(gene > tau)
 
-        connectivity = np.sum(correlation > tau, axis = 0) > 3
+        connectivity = np.sum(correlation > tau, axis = 0) > 6
 
         degree_ratings = np.sum(connectivity > tau, axis=1)
         gold_degree_ratings = np.sum(gold, axis=1)
