@@ -125,7 +125,7 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
     deviation_matrix = np.zeros(neighbor_mean_matrix.shape)
 
     for i in range(len(folds)):
-        deviation_matrix[i] = np.divide((counts-neighbor_mean_matrix[i]),std_dev_matrix[i])
+        deviation_matrix[:,:,i] = np.divide((counts-neighbor_mean_matrix[:,:,i]),std_dev_matrix[:,:,i])
 
     deviation_matrix = np.sum(deviation_matrix > 2.5, axis = 2) > 5
 
