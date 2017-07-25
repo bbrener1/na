@@ -92,6 +92,7 @@ def translate_gold_standard(in_file,labels,species='mouse',presolve=None, prefix
                 error_count += 1
                 continue
 
+    np.save("directional_matrix", network_matrix)
 
     network_matrix = np.logical_or(network_matrix, network_matrix.T)
     network_matrix = network_matrix - np.diag(np.diag(network_matrix))

@@ -5,6 +5,11 @@ import numpy as np
 import sys
 
 
+def fair_compare(inf_network, directional_matrix, output = None):
+    if output = None:
+        output = sys.stdout
+
+    
 
 def compare(network1, network2, output=None):
 
