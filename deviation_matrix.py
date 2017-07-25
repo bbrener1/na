@@ -93,7 +93,7 @@ def compute_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=
 
         if i%100 == 0:
             output.write(str(i) + "\n")
-
+            print i
 
     output.write("Neighbor mean matrix content:\n")
     output.write(str(neighbor_mean_matrix[:10,:10]) + "\n")

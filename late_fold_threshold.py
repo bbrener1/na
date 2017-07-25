@@ -97,7 +97,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
         connectivity = np.sum(correlation > tau, axis = 0) > 3
 
-        degree_ratings = np.sum(correlation > tau, axis=1)
+        degree_ratings = np.sum(connectivity > tau, axis=1)
         gold_degree_ratings = np.sum(gold, axis=1)
 
         print "Unconnected nodes: " + str(np.sum(degree_ratings.flatten() < tau))
@@ -147,7 +147,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
         r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
 
         if tau == .13:
-            plot_edge_certainty(correlation,connectivity, prefix+"edge_certainty.png")
+            plot_edge_certainty(np.median(correlation,axis=0),connectivity, prefix+"edge_certainty.png")
 
     print r2_stat
 
