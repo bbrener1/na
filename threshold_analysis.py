@@ -179,12 +179,12 @@ def main():
     if len(sys.argv)> 2:
         observations = sys.argv[2]
     else:
-        observations = prefix + "deviation_matrix.npy"
+        observations = prefix + "reduced_cons_dev_matrix.npy"
 
     if len(sys.argv)> 3:
         gold = sys.argv[3]
     else:
-        gold = prefix+"gold_network.npy"
+        gold = prefix+"reduced_gold_network.npy"
 
     if len(sys.argv)>4:
         name = sys.argv[4]

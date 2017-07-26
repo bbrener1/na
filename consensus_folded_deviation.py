@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from matrix_assurance import *
 
 
-def folded_deviation_matrix(counts, gold_network = None neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
+def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
 
     if output == None:
         output = sys.stdout
@@ -53,7 +53,7 @@ def folded_deviation_matrix(counts, gold_network = None neighbor_setting = 50, p
     output.write("Deviation Matrix counts shape:\n")
     output.write(str(counts.shape) + "\n")
 
-    int_sum = np.squeeze(np.asarray(np.sum(counts,axis=1)))
+    int_sum = np.squeeze(np.asarray(np.sum(counts,axis=0)))
 
     output.write("Dropout mask shape, content, sum, and converted sum\n")
     output.write(str(int_sum.shape) + "\n")
@@ -64,7 +64,7 @@ def folded_deviation_matrix(counts, gold_network = None neighbor_setting = 50, p
 
     output.write(str(dropout_mask.shape) + "\n")
 
-    counts = counts[dropout_mask]
+    counts = counts[:,dropout_mask]
 
     #
     # distance_matrix = np.zeros((counts.shape[0],counts.shape[0]))
@@ -158,9 +158,10 @@ def folded_deviation_matrix(counts, gold_network = None neighbor_setting = 50, p
     output.write("Was the deviation matrix flattened correctly? Second minimum\n")
     output.write(str( np.amin(deviation_matrix.flatten())) + "\n")
 
-    np.save( pretag + "reduced_" + filename, deviation_matrix[dropout_mask] )
-    if gold_network != None:
-        np.save( pretag + "reduced_gold_network" gold_network[dropout_mask] )
+    np.save( pretag + "reduced_" + filename, deviation_matrix[:,dropout_mask] )
+
+    if str(gold_network) != "None":
+        np.save( pretag + "reduced_gold_network", gold_network[:,dropout_mask] )
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
     np.save( pretag + "std_dev_" + filename, std_dev_matrix)
