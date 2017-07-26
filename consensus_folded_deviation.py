@@ -161,7 +161,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     # np.save( pretag + "reduced_" + filename, deviation_matrix[:,dropout_mask] )
 
     if str(gold_network) != "None":
-        np.save( pretag + "reduced_gold_network", gold_network[:,dropout_mask] )
+        np.save( pretag + "reduced_gold_network", gold_network[dropout_mask].T[dropout_mask].T )
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
     np.save( pretag + "std_dev_" + filename, std_dev_matrix)
