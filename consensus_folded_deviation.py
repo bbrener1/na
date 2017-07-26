@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from matrix_assurance import *
 
 
-def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
+def folded_deviation_matrix(counts, gold_network = None neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
 
     if output == None:
         output = sys.stdout
@@ -158,7 +158,9 @@ def folded_deviation_matrix(counts, neighbor_setting = 50, pretag="", presolve=N
     output.write("Was the deviation matrix flattened correctly? Second minimum\n")
     output.write(str( np.amin(deviation_matrix.flatten())) + "\n")
 
-    np.save( pretag + "reduced_" + filename )
+    np.save( pretag + "reduced_" + filename, deviation_matrix[dropout_mask] )
+    if gold_network != None:
+        np.save( pretag + "reduced_gold_network" gold_network[dropout_mask] )
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
     np.save( pretag + "std_dev_" + filename, std_dev_matrix)
@@ -191,28 +193,35 @@ def main():
         counts = prefix + "counts.npy"
 
     if len(sys.argv)>4:
-        output = sys.argv[4]
+        gold_network = sys.argv[4]
+    else:
+        gold_network = prefix + "gold_network.npy"
+
+    if len(sys.argv)>5:
+        output = sys.argv[5]
     else:
         output = prefix + "dev_matrix_log"
 
-    if len(sys.argv)>5:
-        filename = sys.argv[5]
+    if len(sys.argv)>6:
+        filename = sys.argv[6]
     else:
         filename = "cons_dev_matrix"
 
 
+
     counts = matrix_assurance(counts)
+    gold_network = matrix_assurance(gold_network)
 
     print "Deviation matrix defaults initialized"
 
     if os.path.isfile(prefix + "cons_dev_matrix.npy"):
         if chk.check_hash(counts,"cons_dev_matrix.npy",prefix):
-            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, presolve="cons_dev_matrix.npy")
+            return folded_deviation_matrix(counts, gold_network = gold_network, neighbor_setting = neighbors, pretag = prefix, presolve="cons_dev_matrix.npy")
         else:
-            return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
+            return folded_deviation_matrix(counts, gold_network = gold_network, neighbor_setting = neighbors, pretag = prefix, output = output, filename = filename)
 
     else:
-        return folded_deviation_matrix(counts, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
+        return folded_deviation_matrix(counts, gold_network = gold_network, neighbor_setting = neighbors, pretag=prefix,output = output, filename = filename)
 
 
         # "Invalid pretag probably? Problem in main of cons_dev_matrix.py"
