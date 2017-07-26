@@ -158,7 +158,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     output.write("Was the deviation matrix flattened correctly? Second minimum\n")
     output.write(str( np.amin(deviation_matrix.flatten())) + "\n")
 
-    np.save( pretag + "reduced_" + filename, deviation_matrix[:,dropout_mask] )
+    # np.save( pretag + "reduced_" + filename, deviation_matrix[:,dropout_mask] )
 
     if str(gold_network) != "None":
         np.save( pretag + "reduced_gold_network", gold_network[:,dropout_mask] )
