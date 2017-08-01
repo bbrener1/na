@@ -102,7 +102,7 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     plt.savefig(prefix + "corr_var_fold.png")
 
     if name != None:
-        np.save(prefix + "folded_correlation_backup", np.nan_to_num(correlation_matrix))
+        np.save(prefix + "folded_correlation_backup", np.nan_to_num(consensus_correlation))
         chk.write_hash(observation_matrix, "folded_correlation_backup.npy", prefix)
 
 
@@ -117,6 +117,7 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
     if presolve == None:
         correlation = folded_correlation(observations, name = "folded_correlation_backup", prefix= prefix)
+
     else:
         correlation = np.load(prefix + presolve)
 
