@@ -100,19 +100,22 @@ def partial_correlation(data):
     return partial_correlation
 
 # def predict(data, true_values, slopes, intercepts, means, index,correlation, partial):
-def predict(data, true_values, slopes, intercepts, means, index ,correlation):
+def predict(data, true_values, slopes, intercepts, means, correlation):
 
-    slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
+    # slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
 
     zero_mask = data != 0
 
+    correlation[zero_mask] = 0
+
+
     unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
 
-    weighted = np.multiply(unweighted,correlation)
+    weighted = np.multiply(unweighted,np.abs(correlation))
 
-    prediction1 = np.mean(weighted,axis=0)
+    # prediction1 = np.mean(unweighted,axis=0)
 
-    # prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(correlation,axis=0))
+    prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
 
 
 
@@ -206,7 +209,7 @@ def main():
 
         print pick
 
-        predict(counts[pick,:],counts[pick,:], slopes, intercepts, means, pick, correlations)
+        predict(counts[pick,:],counts[pick,:], slopes, intercepts, means, correlations)
 
 
 
