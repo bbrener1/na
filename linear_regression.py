@@ -195,6 +195,8 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     #     print np.sum(final_mask)
     # return prediction2, zero_mask
 
+    return prediction1
+
 def main():
 
     counts = np.load(sys.argv[1])
