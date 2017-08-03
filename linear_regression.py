@@ -35,7 +35,7 @@ def linear_regression(observations):
     # print np.tile(slopes.diagonal(),(slopes.shape[0],1))[100,50]
 
 
-    slopes = np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
+    slopes = -1 *  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
 
 
 
@@ -154,12 +154,13 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     print list(centered_prediction[100:110])
 
     print "Misc Correlations"
+    print "=================="
     print np.sum(centered)
     print np.sum(np.abs(centered))
     print np.sum(centered_prediction)
     print np.sum(np.abs(centered_prediction))
     print pearsonr(centered,centered_prediction)
-    print pearsonr(centered,np.mean(unweighted_centered,axis=0))
+    print "\n\n"
 
     return prediction2
 
