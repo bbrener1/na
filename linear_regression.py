@@ -106,12 +106,11 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     zero_mask = data != 0
 
-
     correlation = np.copy(correlation)
     correlation[zero_mask] = 0
     correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
     # correlation[correlation < .1] = 0
-
+    correlation = np.power(correlation,10)
 
 
     unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
