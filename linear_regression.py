@@ -122,10 +122,10 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
 
-    return prediction1
-
     print "Prediction 1"
     print pearsonr(prediction1, true_values)
+
+    return prediction1
     # #
     # # print "Prediction 2"
     # #
