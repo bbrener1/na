@@ -35,7 +35,7 @@ def linear_regression(observations):
     # print np.tile(slopes.diagonal(),(slopes.shape[0],1))[100,50]
 
 
-    slopes = -1 *  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
+    slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
 
 
 
