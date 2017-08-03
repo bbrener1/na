@@ -141,7 +141,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     centered = data - means
     unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
-    weighted_centered = np.multiply(unweighted_centered,correlation)
+    weighted_centered = np.multiply(unweighted_centered,np.abs(correlation))
 
     centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
     centered_prediction[np.isinf(centered_prediction)] = 0
