@@ -126,7 +126,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     # print "Prediction 2"
     print pearsonr(data, means)
 
-    correlation = np.power(correlation,3)
+    correlation = np.power(correlation,10)
 
     centered = data - means
     unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
