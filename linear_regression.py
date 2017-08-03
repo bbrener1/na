@@ -146,8 +146,13 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     print pearsonr(prediction2, true_values)
 
     print "Centering"
+    print centered[:10,:10]
+    print centered_prediction[:10,:10]
+
     print np.sum(centered)
+    print np.sum(np.abs(centered))
     print np.sum(centered_prediction)
+    print np.sum(np.abs(centered_prediction))
     print pearsonr(centered,centered_prediction)
 
     return prediction2
