@@ -102,7 +102,7 @@ def partial_correlation(data):
 # def predict(data, true_values, slopes, intercepts, means, index,correlation, partial):
 def predict(data, true_values, slopes, intercepts, means, correlation):
 
-    # slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
+    slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
 
     zero_mask = data != 0
 
@@ -112,61 +112,61 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
     # correlation[correlation < .1] = 0
 
-    #
-    #
-    # unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
-    #
-    # weighted = np.multiply(unweighted,np.abs(correlation))
-    #
-    # # prediction1 = np.mean(unweighted,axis=0)
-    #
-    # prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
-    #
-    #
-    #
-    # print "Prediction 1"
-    # print pearsonr(prediction1, true_values)
-    #
-    # print "Prediction 2"
-    #
-    # print "Quality of template"
-    # sec_zero = true_values != 0
-    # print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
-    #
-    print "Better than noise?"
-    print "=================="
-    print pearsonr(data, means)
 
-    correlation = np.power(correlation,10)
 
-    centered = data - means
-    unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
-    weighted_centered = np.multiply(unweighted_centered,np.abs(correlation))
+    unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
 
-    centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
-    centered_prediction[np.isinf(centered_prediction)] = 0
-    centered_prediction = np.nan_to_num(centered_prediction)
+    weighted = np.multiply(unweighted,np.abs(correlation))
 
-    prediction2 = centered_prediction + means
+    # prediction1 = np.mean(unweighted,axis=0)
 
-    print pearsonr(prediction2, means)
-    print pearsonr(prediction2, true_values)
+    prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
 
-    print "Centering"
-    print "=================="
-    print list(centered[100:110])
-    print list(centered_prediction[100:110])
+    return prediction1
 
-    print "Misc Correlations"
-    print "=================="
-    print np.sum(centered)
-    print np.sum(np.abs(centered))
-    print np.sum(centered_prediction)
-    print np.sum(np.abs(centered_prediction))
-    print pearsonr(centered,centered_prediction)[0]
-    print "\n\n"
-
-    return prediction2
+    print "Prediction 1"
+    print pearsonr(prediction1, true_values)
+    # #
+    # # print "Prediction 2"
+    # #
+    # # print "Quality of template"
+    # # sec_zero = true_values != 0
+    # # print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
+    # #
+    # print "Better than noise?"
+    # print "=================="
+    # print pearsonr(data, means)
+    #
+    # correlation = np.power(correlation,10)
+    #
+    # centered = data - means
+    # unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
+    # weighted_centered = np.multiply(unweighted_centered,np.abs(correlation))
+    #
+    # centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
+    # centered_prediction[np.isinf(centered_prediction)] = 0
+    # centered_prediction = np.nan_to_num(centered_prediction)
+    #
+    # prediction2 = centered_prediction + means
+    #
+    # print pearsonr(prediction2, means)
+    # print pearsonr(prediction2, true_values)
+    #
+    # print "Centering"
+    # print "=================="
+    # print list(centered[100:110])
+    # print list(centered_prediction[100:110])
+    #
+    # print "Misc Correlations"
+    # print "=================="
+    # print np.sum(centered)
+    # print np.sum(np.abs(centered))
+    # print np.sum(centered_prediction)
+    # print np.sum(np.abs(centered_prediction))
+    # print pearsonr(centered,centered_prediction)[0]
+    # print "\n\n"
+    #
+    # return prediction2
 
 def main():
 
