@@ -140,7 +140,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
 
-    prediction2 = centered_prediction + means
+    prediction2 = 3*centered_prediction + means
 
     print pearsonr(prediction2, means)
     print pearsonr(prediction2, true_values)
