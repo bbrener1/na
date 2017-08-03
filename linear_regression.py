@@ -20,7 +20,7 @@ def linear_regression(observations):
 
     centered = observations - np.tile(means, (observations.shape[0],1))
 
-    slopes = np.cov(observations.T)
+    # slopes = np.cov(observations.T)
     #
     # print slopes[50,50]
     # print slopes[50,51]
@@ -35,8 +35,8 @@ def linear_regression(observations):
     # print np.tile(slopes.diagonal(),(slopes.shape[0],1))[100,50]
 
 
-    slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
-
+    # slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
+    slopes = np.corrcoef(observations.T)
 
 
 
@@ -99,18 +99,18 @@ def partial_correlation(data):
 
     return partial_correlation
 
-# def predict(data, true_values, slopes, intercepts, means, index,correlation, partial):
-def predict(data, true_values, slopes, intercepts, means, correlation):
+def predict(data, true_values, slopes, intercepts, means, correlation, partial):
+# def predict(data, true_values, slopes, intercepts, means, correlation):
 
     slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
 
     zero_mask = data != 0
 
-    correlation = np.copy(correlation)
+    correlation = np.copy(partial)
     correlation[zero_mask] = 0
     correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
     # correlation[correlation < .1] = 0
-    correlation = np.power(correlation,10)
+    # correlation = np.power(correlation,10)
 
 
     unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
@@ -175,7 +175,7 @@ def main():
 
     slopes, intercepts, means, correlations = linear_regression(counts)
 
-    # partial = partial_correlation(counts)
+    partial = partial_correlation(counts)
 
 
 
@@ -184,7 +184,7 @@ def main():
         print pick
 
 
-        predict(counts[pick,:],counts[pick,:], slopes, intercepts, means, correlations)
+        predict(counts[pick,:],counts[pick,:], slopes, intercepts, means, correlations,partial)
 
 
 
