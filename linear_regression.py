@@ -109,6 +109,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     correlation = np.copy(correlation)
     correlation[zero_mask] = 0
+    correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
 
     #
     #
