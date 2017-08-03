@@ -113,7 +113,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation, partial):
     # correlation = np.power(correlation,10)
 
 
-    unweighted = 10*np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
+    unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes*100) + intercepts
 
     # weighted = np.multiply(unweighted,np.abs(correlation))
 
