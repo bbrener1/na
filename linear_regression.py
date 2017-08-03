@@ -119,7 +119,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation, partial):
 
     prediction1 = np.average(unweighted,axis=0,weights=correlation)
 
-    prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
+    # prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
 
     print "Prediction 1"
     print pearsonr(prediction1, true_values)
