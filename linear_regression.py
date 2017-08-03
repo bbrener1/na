@@ -126,7 +126,8 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     # print "Prediction 2"
 
     print "Quality of template"
-    print pearsonr(data[zero_mask],true_values[zero_mask])
+    sec_zero = true_values != 0
+    print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
 
     print "Better than noise?"
     print pearsonr(data, means)
