@@ -132,7 +132,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     print "Better than noise?"
     print pearsonr(data, means)
 
-    correlation = np.power(correlation,1)
+    correlation = np.power(correlation,5)
 
     centered = data - means
     unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
