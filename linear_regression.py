@@ -106,8 +106,10 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     zero_mask = data != 0
 
+
     correlation = np.copy(correlation)
     correlation[zero_mask] = 0
+
     #
     #
     # unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
@@ -124,15 +126,16 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     # print pearsonr(prediction1, true_values)
     #
     # print "Prediction 2"
-
-    print "Quality of template"
-    sec_zero = true_values != 0
-    print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
+    #
+    # print "Quality of template"
+    # sec_zero = true_values != 0
+    # print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
 
     print "Better than noise?"
+    print "=================="
     print pearsonr(data, means)
 
-    correlation = np.power(correlation,5)
+    correlation = np.power(correlation,10)
 
     centered = data - means
     unweighted_centered = np.multiply(np.tile(centered,(slopes.shape[0],1)).T,slopes)
@@ -140,20 +143,23 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
 
     centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
 
-    prediction2 = 3*centered_prediction + means
+    prediction2 = centered_prediction + means
 
     print pearsonr(prediction2, means)
     print pearsonr(prediction2, true_values)
 
     print "Centering"
-    print list(centered[:20])
-    print list(centered_prediction[:20])
+    print "=================="
+    print list(centered[100:110])
+    print list(centered_prediction[100:110])
 
+    print "Misc Correlations"
     print np.sum(centered)
     print np.sum(np.abs(centered))
     print np.sum(centered_prediction)
     print np.sum(np.abs(centered_prediction))
     print pearsonr(centered,centered_prediction)
+    print pearsonr(centered,unweighted_centered)
 
     return prediction2
 
