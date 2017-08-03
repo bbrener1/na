@@ -110,6 +110,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     correlation = np.copy(correlation)
     correlation[zero_mask] = 0
     correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
+    # correlation[correlation < .1] = 0
 
     #
     #
@@ -131,10 +132,10 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     # print "Quality of template"
     # sec_zero = true_values != 0
     # print pearsonr(data[np.logical_and(zero_mask,sec_zero)],true_values[np.logical_and(zero_mask,sec_zero)])
-
-    print "Better than noise?"
-    print "=================="
-    print pearsonr(data, means)
+    #
+    # print "Better than noise?"
+    # print "=================="
+    # print pearsonr(data, means)
 
     correlation = np.power(correlation,10)
 
@@ -143,25 +144,27 @@ def predict(data, true_values, slopes, intercepts, means, correlation):
     weighted_centered = np.multiply(unweighted_centered,correlation)
 
     centered_prediction = np.divide(np.sum(weighted_centered,axis=0),np.sum(np.abs(correlation),axis=0))
+    centered_prediction[np.isinf(centered_prediction)] = 0
+    centered_prediction = np.nan_to_num(centered_prediction)
 
     prediction2 = centered_prediction + means
 
-    print pearsonr(prediction2, means)
-    print pearsonr(prediction2, true_values)
-
-    print "Centering"
-    print "=================="
-    print list(centered[100:110])
-    print list(centered_prediction[100:110])
-
-    print "Misc Correlations"
-    print "=================="
-    print np.sum(centered)
-    print np.sum(np.abs(centered))
-    print np.sum(centered_prediction)
-    print np.sum(np.abs(centered_prediction))
-    print pearsonr(centered,centered_prediction)
-    print "\n\n"
+    # print pearsonr(prediction2, means)
+    # print pearsonr(prediction2, true_values)
+    #
+    # print "Centering"
+    # print "=================="
+    # print list(centered[100:110])
+    # print list(centered_prediction[100:110])
+    #
+    # print "Misc Correlations"
+    # print "=================="
+    # print np.sum(centered)
+    # print np.sum(np.abs(centered))
+    # print np.sum(centered_prediction)
+    # print np.sum(np.abs(centered_prediction))
+    print pearsonr(centered,centered_prediction)[0]
+    # print "\n\n"
 
     return prediction2
 
@@ -177,7 +180,7 @@ def main():
 
 
 
-    for pick in np.random.randint(counts.shape[0], size=5):
+    for pick in np.random.randint(counts.shape[0], size=100):
 
         print pick
 
