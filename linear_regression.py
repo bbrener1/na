@@ -117,7 +117,7 @@ def predict(data, true_values, slopes, intercepts, means, correlation, partial):
 
     # weighted = np.multiply(unweighted,np.abs(correlation))
 
-    prediction1 = np.average(unweighted,axis=0,weights=correlation)
+    prediction1 = np.mean(unweighted,axis=0)
 
     # prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(correlation),axis=0))
 
