@@ -30,7 +30,7 @@ def parallel_regression(counts):
     pval = np.zeros((counts.shape[1],counts.shape[1]))
 
     # pool = mlt.Pool(processes=min(20,mlt.cpu_count))
-    pool = mlt.Pool(processes=23)
+    pool = mlt.Pool(processes=10)
 
     returns = pool.imap_unordered(compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
