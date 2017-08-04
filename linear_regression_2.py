@@ -32,6 +32,8 @@ def parallel_regression(counts):
     # pool = mlt.Pool(processes=min(20,mlt.cpu_count))
     pool = mlt.Pool(processes=10)
 
+    print "Parallel Regression Started"
+
     returns = pool.imap_unordered(compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
     for i,c in enumerate(returns):
@@ -137,6 +139,8 @@ def predict_gene(gene, index,  slopes,intercepts, correlations, pval, truth = No
 def main():
 
     counts = np.load(sys.argv[1])
+
+    print "Main successful"
 
     slopes, intercepts, means, correlations, pval = parallel_regression(counts)
 
