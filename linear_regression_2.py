@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import multiprocessing as mlt
+
 import sys
 
 import numpy as np
@@ -14,6 +16,39 @@ from scipy.stats import linregress
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+
+def parallel_regression(counts):
+
+    slopes = np.zeros((counts.shape[1],counts.shape[1]))
+
+    intercepts = np.zeros((counts.shape[1],counts.shape[1]))
+
+    means = np.mean(counts,axis=0)
+
+    correlations = np.zeros((counts.shape[1],counts.shape[1]))
+
+    pval = np.zeros((counts.shape[1],counts.shape[1]))
+
+    pool = mlt.Pool(processes=min(20,mlt.cpu_count))
+
+    returns = pool.imap_unordered(compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+
+    for i,c in enumerate(returns):
+        slopes[c[1],c[2]] = c[0][0]
+        intercepts[c[1],c[2]] = c[0][1]
+        correlations[c[1],c[2]] = c[0][2]
+        pval[c[1],c[2]] = c[0][3]
+
+    return slopes,intercepts,means,correlations,pval
+
+def compact_regression(l):
+    print l[2:]
+    # print l[:1]
+    # print l[3]
+    result = (linregress(l[0],l[1]),l[2],l[3])
+    # print len(result[0])
+    # print result[0]
+    return result
 
 def linear_regression(counts):
 
@@ -46,6 +81,14 @@ def linear_regression(counts):
     # slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
     #
     # intercepts
+
+def partial_correlation(data):
+
+    precision = np.linalg.inv(np.corrcoef(data.T))
+
+    partial_correlation = np.divide(precision,np.tile(precision.diagonal(),(precision.shape[0],1)).T)
+
+    return partial_correlation
 
 def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = None ):
 
@@ -92,7 +135,7 @@ def main():
 
     counts = np.load(sys.argv[1])
 
-    slopes, intercepts, means, correlations, pval = linear_regression(counts)
+    slopes, intercepts, means, correlations, pval = parallel_regression(counts)
 
     partial = partial_correlation(counts)
 
