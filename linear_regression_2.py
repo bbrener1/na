@@ -38,11 +38,13 @@ def parallel_regression(counts):
         intercepts[c[1],c[2]] = c[0][1]
         correlations[c[1],c[2]] = c[0][2]
         pval[c[1],c[2]] = c[0][3]
+        if i%10000==0:
+            print i
 
     return slopes,intercepts,means,correlations,pval
 
 def compact_regression(l):
-    print l[2:]
+    # print l[2:]
     # print l[:1]
     # print l[3]
     result = (linregress(l[0],l[1]),l[2],l[3])
