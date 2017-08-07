@@ -22,7 +22,7 @@ class stripped_regression:
     def __init__(self, counts, solved=False, prefix=""):
 
         self.counts = np.load(counts)
-        self.prefix =
+        self.prefix = prefix
 
         print "Main successful"
 
