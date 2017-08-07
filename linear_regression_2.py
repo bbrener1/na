@@ -110,6 +110,7 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     pvalue_derived_weights = np.power(pval,-1)
     pvalue_derived_weights[pvalue_derived_weights > 1000] = 1000
+    pvalue_derived_weights[pvalue_derived_weights < .000001] = .000001
     pvalue_derived_weights = np.log10(pvalue_derived_weights)
 
     pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = pvalue_derived_weights)
