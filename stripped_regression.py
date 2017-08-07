@@ -19,6 +19,12 @@ import matplotlib.pyplot as plt
 
 class stripped_regression:
 
+    @staticmethod
+    def compact_regression(l):
+        result = (linregress(l[0],l[1]),l[2],l[3])
+        return result
+
+
     def __init__(self, counts, solved=False, prefix=""):
 
         self.counts = np.load(counts)
@@ -84,9 +90,6 @@ class stripped_regression:
 
         return slopes,intercepts,means,correlations,pval
 
-    def compact_regression(self,l):
-        result = (linregress(l[0],l[1]),l[2],l[3])
-        return result
 
 
     def partial_correlation(data):
