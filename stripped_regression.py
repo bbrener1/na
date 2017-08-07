@@ -33,7 +33,7 @@ class stripped_regression:
             self.correlations = np.load(prefix + "correlations_lin_reg.npy")
             self.pval = np.load(prefix + "pval_lin_reg.npy")
         else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts)
+            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self, self.counts)
 
         self.partial = self.partial_correlation(counts)
 
@@ -48,7 +48,7 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], self.slopes, self.intercepts, self.means, self.correlations, self.partial, truth = self.counts[pick,:])
 
 
-    def parallel_regression(counts):
+    def parallel_regression(self, counts):
 
         slopes = np.zeros((counts.shape[1],counts.shape[1]))
 
