@@ -60,7 +60,7 @@ class stripped_regression:
 
         pval = np.zeros((counts.shape[1],counts.shape[1]))
 
-        pool = mlt.Pool(processes=mlt.cpu_count-2)
+        pool = mlt.Pool(processes=mlt.cpu_count()-2)
         # pool = mlt.Pool(processes=10)
 
         print "Parallel Regression Started"
