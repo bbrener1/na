@@ -79,6 +79,8 @@ def linear_regression(counts):
             slopes[i,j],intercepts[i,j], correlations[i,j], pval[i,j], _ = linregress(counts[:,i],counts[:,j])
 
     slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
+    correlations[np.identity(correlations.shape[0],dtype=bool)] = 0
+    pval[np.identity(pval.shape[0],dtype=bool)] = .99
 
     means = np.mean(counts,axis=0)
 
