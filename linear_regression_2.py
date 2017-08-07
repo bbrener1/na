@@ -108,7 +108,7 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     unadjusted = np.mean(raw_predicted, axis = 0)
 
-    pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = pval)
+    pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = np.log10(np.power(pval,-1)))
 
     correlation_adjusted = np.average(raw_predicted, axis = 0, weights = np.power(correlations,-1))
 
