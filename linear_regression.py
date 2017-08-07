@@ -111,15 +111,15 @@ def predict(data, true_values, slopes, intercepts, means, correlation, partial):
     correlation = np.multiply(correlation,np.logical_not(np.identity(correlation.shape[0],dtype=bool)))
     # correlation[correlation < .1] = 0
     # correlation = np.power(correlation,10)
-    weights = np.power(1.0 - np.abs(correlation), -1.0)
+    weights = np.power(1.0 - np.abs(correlation), -1)
 
     unweighted = np.multiply(np.tile(data,(slopes.shape[0],1)).T,slopes) + intercepts
 
-    weighted = np.multiply(unweighted,weights)
+    # weighted = np.multiply(unweighted,weights)
 
     # prediction1 = np.mean(unweighted,axis=0)
 
-    prediction1 = np.divide(np.sum(weighted,axis=0),np.sum(np.abs(weights),axis=0))
+    prediction1 = np.average(unweighted, weights=weights, axis = 0)
 
     print "Prediction 1"
     print pearsonr(prediction1, true_values)

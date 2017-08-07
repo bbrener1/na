@@ -151,13 +151,13 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     return raw_predicted, pvalue_adjusted, correlation_adjusted
 
-def predict_gene(gene, index,  slopes,intercepts, correlations, pval, truth = None):
-
-    temp = np.zeros((gene.shape[0],1))
-    temp[:,0]=gene
-    gene = temp
-
-    raw_predicted = np.multiply(np.tile(gene,(1,slopes.shape[0])),np.tile(slopes[index],(gene.shape[0],1)))
+# def predict_gene(gene, index,  slopes,intercepts, correlations, pval, truth = None):
+#
+#     temp = np.zeros((gene.shape[0],1))
+#     temp[:,0]=gene
+#     gene = temp
+#
+#     raw_predicted = np.multiply(np.tile(gene,(1,slopes.shape[0])),np.tile(slopes[index],(gene.shape[0],1)))
 
 def main():
 
