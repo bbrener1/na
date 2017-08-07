@@ -108,9 +108,9 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     unadjusted = np.mean(raw_predicted, axis = 0)
 
-    pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = np.power(pval, -1))
+    pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = pval)
 
-    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlations)
+    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = np.power(correlations,-1))
 
     if truth != None:
         print "Truth To Mean"
@@ -130,9 +130,12 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
         print pearsonr(unadjusted-means,truth-means)
         print pearsonr(pvalue_adjusted-means,truth-means)
         print pearsonr(correlation_adjusted-means,truth-means)
-        print np.sum(unadjusted-means)
-        print np.sum(pvalue_adjusted-means)
-        print np.sum(correlation_adjusted-means)
+        print "True sum"
+        print np.sum(np.abs(truth-means))
+        print "Prediction sums"
+        print np.sum(np.abs(unadjusted-means))
+        print np.sum(np.abs(pvalue_adjusted-means))
+        print np.sum(np.abs(correlation_adjusted-means))
 
         print "\n\n"
 
@@ -165,7 +168,7 @@ def main():
 
 
 
-    for pick in np.random.randint(counts.shape[0], size=100):
+    for pick in np.random.randint(counts.shape[0], size=20):
 
         print pick
 
