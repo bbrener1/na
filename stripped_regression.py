@@ -17,12 +17,12 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
-class stripped_regression:
+def compact_regression(l):
+    result = (linregress(l[0],l[1]),l[2],l[3])
+    return result
 
-    @staticmethod
-    def compact_regression(l):
-        result = (linregress(l[0],l[1]),l[2],l[3])
-        return result
+
+class stripped_regression:
 
 
     def __init__(self, counts, solved=False, prefix=""):
@@ -71,7 +71,7 @@ class stripped_regression:
 
         print "Parallel Regression Started"
 
-        returns = pool.imap_unordered(self.compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+        returns = pool.imap_unordered(compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
         for i,c in enumerate(returns):
             slopes[c[1],c[2]] = c[0][0]
