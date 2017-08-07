@@ -20,7 +20,7 @@ def linear_regression(observations):
 
     centered = observations - np.tile(means, (observations.shape[0],1))
 
-    # slopes = np.cov(observations.T)
+    slopes = np.cov(observations.T)
     #
     # print slopes[50,50]
     # print slopes[50,51]
@@ -35,8 +35,8 @@ def linear_regression(observations):
     # print np.tile(slopes.diagonal(),(slopes.shape[0],1))[100,50]
 
 
-    # slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
-    slopes = np.corrcoef(observations.T)
+    slopes =  np.divide(slopes,np.tile(slopes.diagonal(),(slopes.shape[0],1)).T)
+    # slopes = np.corrcoef(observations.T)
 
 
 
