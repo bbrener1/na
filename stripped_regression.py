@@ -84,6 +84,10 @@ class stripped_regression:
 
         return slopes,intercepts,means,correlations,pval
 
+    def compact_regression(self,l):
+        result = (linregress(l[0],l[1]),l[2],l[3])
+        return result
+
 
     def partial_correlation(data):
 
