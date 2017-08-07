@@ -44,6 +44,13 @@ def parallel_regression(counts):
         if i%10000==0:
             print i
 
+    np.save("slopes_lin_reg", slopes)
+    np.save("intercepts_lin_reg", intercepts)
+    np.save("correlations_lin_reg", correlations)
+    np.save("pval_lin_reg", pval)
+    np.save("means_lin_reg", means)
+
+
     return slopes,intercepts,means,correlations,pval
 
 def compact_regression(l):
@@ -97,7 +104,7 @@ def partial_correlation(data):
 
 def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = None ):
 
-    raw_predicted = np.multiply(np.tile(cell,(slopes.shape[0],1)).T,slopes) + np.intercepts
+    raw_predicted = np.multiply(np.tile(cell,(slopes.shape[0],1)).T,slopes) + intercepts
 
     unadjusted = np.mean(raw_predicted, axis = 0)
 
