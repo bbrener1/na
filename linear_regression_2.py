@@ -130,6 +130,9 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
         print pearsonr(unadjusted-means,truth-means)
         print pearsonr(pvalue_adjusted-means,truth-means)
         print pearsonr(correlation_adjusted-means,truth-means)
+        print np.sum(unadjusted-means)
+        print np.sum(pvalue_adjusted-means)
+        print np.sum(correlation_adjusted-means)
 
         print "\n\n"
 
@@ -149,7 +152,14 @@ def main():
 
     print "Main successful"
 
-    slopes, intercepts, means, correlations, pval = parallel_regression(counts)
+    if "solved" in sys.argv:
+        slopes = np.load("slopes_lin_reg.npy")
+        intercepts = np.load("intercepts_lin_reg.npy")
+        means = np.load("means_lin_reg.npy")
+        correlations = np.load("correlations_lin_reg.npy")
+        pval = np.load("pval_lin_reg.npy")
+    else:
+        slopes, intercepts, means, correlations, pval = parallel_regression(counts)
 
     partial = partial_correlation(counts)
 
@@ -158,6 +168,7 @@ def main():
     for pick in np.random.randint(counts.shape[0], size=100):
 
         print pick
+
 
         predict_cell(counts[pick,:], slopes, intercepts, means, correlations,partial,truth = counts[pick,:])
 
