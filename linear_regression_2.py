@@ -110,7 +110,7 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = np.log10(np.power(pval,-1)))
 
-    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = np.power(correlations,-1))
+    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = np.power(1-correlations,-1))
 
     if truth != None:
         print "Truth To Mean"
