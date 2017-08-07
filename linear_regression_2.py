@@ -110,17 +110,17 @@ def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = No
 
     unadjusted = np.mean(raw_predicted, axis = 0)
 
-    pvalue_derived_weights = np.power(pval,-3)
+    pvalue_derived_weights = np.power(pval,-10)
     pvalue_derived_weights[pvalue_derived_weights > 1000000] = 1000000
     pvalue_derived_weights[pvalue_derived_weights < .000001] = .000001
     # pvalue_derived_weights = np.log10(pvalue_derived_weights)
 
     pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = pvalue_derived_weights)
 
-    correlation_derived_weights = np.power(1-correlations, -1)
+    correlation_derived_weights = np.power(1-np.abs(correlations), -1)
     correlation_derived_weights[correlation_derived_weights > 1000] = 1000
 
-    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = np.abs(correlation_derived_weights))
+    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
 
     if truth != None:
         print "Truth To Mean"
