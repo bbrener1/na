@@ -37,3 +37,6 @@ def main():
     print "Model built"
 
     linear_model.test()
+
+if __name__ == "__main__":
+    main()
