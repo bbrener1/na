@@ -37,7 +37,7 @@ def main():
 
     # print counts.shape
 
-    linear_model = stripped_regression.stripped_regression(counts, prefix = prefix)
+    linear_model = stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix)
 
     print "Model built"
 

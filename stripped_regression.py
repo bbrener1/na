@@ -41,7 +41,7 @@ class stripped_regression:
         else:
             self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts)
 
-        self.partial = self.partial_correlation(counts)
+        self.partial = self.partial_correlation(self.counts)
 
 
     def test(self):
@@ -71,7 +71,7 @@ class stripped_regression:
 
         print "Parallel Regression Started"
 
-        returns = pool.imap_unordered(compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+        returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
         for i,c in enumerate(returns):
             slopes[c[1],c[2]] = c[0][0]
@@ -81,18 +81,24 @@ class stripped_regression:
             if i%10000==0:
                 print i
 
-        np.save("slopes_lin_reg", slopes)
-        np.save("intercepts_lin_reg", intercepts)
-        np.save("correlations_lin_reg", correlations)
-        np.save("pval_lin_reg", pval)
-        np.save("means_lin_reg", means)
+        slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
+
+        correlations[np.identity(correlations.shape[0],dtype=bool)] = 0
+
+        pval[np.identity(pval.shape[0],dtype=bool)] = .99
+
+        np.save(self.prefix + "slopes_lin_reg", slopes)
+        np.save(self.prefix + "intercepts_lin_reg", intercepts)
+        np.save(self.prefix + "correlations_lin_reg", correlations)
+        np.save(self.prefix + "pval_lin_reg", pval)
+        np.save(self.prefix + "means_lin_reg", means)
 
 
         return slopes,intercepts,means,correlations,pval
 
 
 
-    def partial_correlation(data):
+    def partial_correlation(self, data):
 
         precision = np.linalg.inv(np.corrcoef(data.T))
 
