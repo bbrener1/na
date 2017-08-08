@@ -7,6 +7,7 @@
 # covariance = deviation_matrix(imp_obs)
 
 import numpy as np
+import sys
 
 import stripped_regression
 
