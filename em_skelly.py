@@ -29,7 +29,9 @@ def main():
 
     print "Initiating"
 
-    counts = np.load(prefix+"/counts.npy")
+    # counts = np.load(prefix+"/counts.npy")
+
+    counts = prefix + "/counts.npy"
 
     print "Counts loaded:"
 
