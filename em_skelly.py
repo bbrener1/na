@@ -24,8 +24,16 @@ def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
 
 def main():
 
+    print "Initiating"
+
     counts = np.load(prefix+"/counts.npy")
 
+    print "Counts loaded:"
+
+    print counts.shape
+
     linear_model = stripped_regression.stripped_regression(counts, prefix = prefix)
+
+    print "Model built"
 
     linear_model.test()
