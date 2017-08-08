@@ -35,7 +35,7 @@ def main():
 
     print "Counts loaded:"
 
-    print counts.shape
+    # print counts.shape
 
     linear_model = stripped_regression.stripped_regression(counts, prefix = prefix)
 
