@@ -24,6 +24,8 @@ def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
 
 def main():
 
+    prefix = sys.argv[1]
+
     print "Initiating"
 
     counts = np.load(prefix+"/counts.npy")
