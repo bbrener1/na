@@ -8,8 +8,6 @@ import scipy.spatial.distance as spt
 import check_hash as chk
 import itertools
 import scipy.stats as st
-from sklearn import preprocessing as pre
-
 
 import matplotlib
 matplotlib.use('agg')
@@ -131,7 +129,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     deviation_matrix = np.sum(np.abs(deviation_matrix) > 1.5 , axis = 2) > 5
 
-    numeric_deviation_matrix = np.median(deviation_matrix, axis=2)
+    numeric_deviation_matrix =
 
     qc_array = np.nan_to_num(st.variation(neighbor_mean_matrix, axis = 2).flatten())
 
@@ -165,9 +163,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     if str(gold_network) != "None":
         np.save( pretag + "reduced_gold_network", gold_network[dropout_mask].T[dropout_mask].T )
-
     np.save( pretag + filename,deviation_matrix)
-    np.save( pretag + "numeric_" + filename, numeric_deviation_matrix)
     np.save( pretag + "dropout_" + filename,dropout_mask)
     np.save( pretag + "std_dev_" + filename, std_dev_matrix)
     chk.write_hash(counts,filename +".npy", pretag)

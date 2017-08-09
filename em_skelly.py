@@ -21,7 +21,7 @@ def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
     for i, cell in enumerate(cell_matrix):
         predicted_counts[i] = linear_model.predict_cell(cell)
 
-    # distance_weights =
+    distance_weights = np.divide(1, np.power((1+iteration/50), distances))
 
 def main():
 
@@ -42,6 +42,24 @@ def main():
     print "Model built"
 
     linear_model.test()
+
+
+    dist_model = PCA(n_components=50)
+    dist_interm = dist_model.fit_transform(counts)
+    dist = spt.squareform(spt.pdist(dist_interm))
+
+    for gene in counts
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     main()

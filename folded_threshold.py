@@ -11,6 +11,7 @@ from compare import *
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import scipy.stats as st
+import scipy.spatial.distance as spt
 
 
 import itertools
@@ -66,7 +67,7 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
     integer_mask = np.random.randint(fold_number, size = observation_matrix.shape[0])
 
-    correlation_matrix = np.zeros((len(folds),observation_matrix.shape[1],observation_matrix.shape[1]))
+    correlation_weights = np.zeros((len(folds),observation_matrix.shape[1],observation_matrix.shape[1]))
 
     for i, fold in enumerate(folds):
         fold_mask = np.zeros(observation_matrix.shape[0],dtype=bool)
@@ -76,6 +77,11 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
         print i
 
         correlation_matrix[i] = np.abs(np.nan_to_num(np.corrcoef(observation_matrix[fold_mask].T)))
+
+        inverse_gene_distances = np.power(spt.pdist(correlation_matrix),-1)
+
+        correlation_weights[i] = np.dot(correlation_matrix, inverse_gene_distances)
+
         correlation_matrix[i] = correlation_matrix[i] - np.diag(np.diag(correlation_matrix[i]))
 
         print i
@@ -83,6 +89,10 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     print "Computing consensus"
 
     consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
+
+    consensus_weights = np.median(np.sort(correlation_weights, axis=0)[:5,:,:],axis=0)
+
+    consensus_correlation *= pre.normalize(consensus_weights, axis = 1)
 
     print "Computing the QC array"
 

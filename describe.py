@@ -109,7 +109,7 @@ def main():
     if len(sys.argv)> 2:
         deviation_matrix = sys.argv[2]
     else:
-        deviation_matrix = prefix + "deviation_matrix.npy"
+        deviation_matrix = prefix + "numeric_cons_dev_matrix.npy"
 
     if len(sys.argv)> 3:
         description = sys.argv[3]

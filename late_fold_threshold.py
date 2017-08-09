@@ -208,7 +208,7 @@ def main():
     if len(sys.argv)> 2:
         observations = sys.argv[2]
     else:
-        observations = prefix + "folded_dev_matrix.npy"
+        observations = prefix + "cons_dev_matrix.npy"
 
     if len(sys.argv)> 3:
         gold = sys.argv[3]
