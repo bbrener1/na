@@ -86,13 +86,12 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     print "Computing consensus"
 
     consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
-
-    inverse_gene_distances = np.corrcoef(consensus_correlation)
+    #
+    correlation_weights = np.corrcoef(consensus_correlation)
 
     # inverse_gene_distances[np.isinf(inverse_gene_distances)] = 1
 
-    correlation_weights = np.dot(np.dot(consensus_correlation, consensus_correlation),consensus_correlation)
-
+    # correlation_weights = np.dot(consensus_correlation, inverse_gene_distances)
 
     correlation_weights[np.isinf(correlation_weights)] = 0
     correlation_weights = np.nan_to_num(correlation_weights)
@@ -125,9 +124,9 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     plt.hist(np.sum(consensus_correlation, axis = 1), bins = 20)
     plt.savefig(prefix + "description/correlation_totals.png")
 
-    plt.figure()
-    plt.hist(np.sum(inverse_gene_distances, axis = 0), bins = 20)
-    plt.savefig(prefix + "description/distance_totals.png")
+    # plt.figure()
+    # plt.hist(np.sum(inverse_gene_distances, axis = 0), bins = 20)
+    # plt.savefig(prefix + "description/distance_totals.png")
 
 
     print "Computing the QC array"
@@ -155,7 +154,7 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
         chk.write_hash(observation_matrix, "folded_correlation_backup.npy", prefix)
 
 
-    return correlation_weights
+    return consensus_correlation
 
 def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, name = "", prefix = ""):
 
@@ -304,7 +303,7 @@ def main():
 
     observations = matrix_assurance(observations)
     gold = matrix_assurance(gold)
-    custom_scroll = map(lambda x: float(x)*.01,range(1,30,1))
+    custom_scroll = map(lambda x: float(x)*.005,range(1,40,1))
 
 
 
