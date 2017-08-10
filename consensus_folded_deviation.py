@@ -128,10 +128,14 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     for i in range(len(folds)):
         deviation_matrix[:,:,i] = np.divide((counts-neighbor_mean_matrix[:,:,i]),std_dev_matrix[:,:,i])
+        deviation_matrix[:,:,i] = np.nan_to_num(deviation_matrix[:,:,i])
+        deviation_matrix[:,:,i][deviation_matrix[:,:,i] > 10] = 10
+        deviation_matrix[:,:,i][deviation_matrix[:,:,i] < -10] = -10
 
-    deviation_matrix = np.sum(np.abs(deviation_matrix) > 1.5 , axis = 2) > 5
 
     numeric_deviation_matrix = np.median(deviation_matrix, axis=2)
+
+    deviation_matrix = np.sum(np.abs(deviation_matrix) > 1.5 , axis = 2) > 5
 
     qc_array = np.nan_to_num(st.variation(neighbor_mean_matrix, axis = 2).flatten())
 

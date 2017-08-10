@@ -23,6 +23,8 @@ def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
 
     distance_weights = np.divide(1, np.power((1+iteration/50), distances))
 
+    np.average()
+
 def main():
 
     prefix = sys.argv[1]

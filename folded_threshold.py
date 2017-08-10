@@ -12,6 +12,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import scipy.stats as st
 import scipy.spatial.distance as spt
+from sklearn import preprocessing as pre
 
 
 import itertools
@@ -67,7 +68,7 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
     integer_mask = np.random.randint(fold_number, size = observation_matrix.shape[0])
 
-    correlation_weights = np.zeros((len(folds),observation_matrix.shape[1],observation_matrix.shape[1]))
+    correlation_matrix = np.zeros((len(folds),observation_matrix.shape[1],observation_matrix.shape[1]))
 
     for i, fold in enumerate(folds):
         fold_mask = np.zeros(observation_matrix.shape[0],dtype=bool)
@@ -78,10 +79,6 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
         correlation_matrix[i] = np.abs(np.nan_to_num(np.corrcoef(observation_matrix[fold_mask].T)))
 
-        inverse_gene_distances = np.power(spt.pdist(correlation_matrix),-1)
-
-        correlation_weights[i] = np.dot(correlation_matrix, inverse_gene_distances)
-
         correlation_matrix[i] = correlation_matrix[i] - np.diag(np.diag(correlation_matrix[i]))
 
         print i
@@ -90,9 +87,48 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
 
     consensus_correlation = np.median(np.sort(correlation_matrix, axis=0)[:5,:,:],axis=0)
 
-    consensus_weights = np.median(np.sort(correlation_weights, axis=0)[:5,:,:],axis=0)
+    inverse_gene_distances = np.corrcoef(consensus_correlation)
 
-    consensus_correlation *= pre.normalize(consensus_weights, axis = 1)
+    # inverse_gene_distances[np.isinf(inverse_gene_distances)] = 1
+
+    correlation_weights = np.dot(np.dot(consensus_correlation, consensus_correlation),consensus_correlation)
+
+
+    correlation_weights[np.isinf(correlation_weights)] = 0
+    correlation_weights = np.nan_to_num(correlation_weights)
+
+    print "Total is: " + str(np.sum(correlation_weights.flatten()))
+    print "Log10 total is: " + str(np.sum(np.log10(correlation_weights).flatten()))
+
+    plt.figure()
+    plt.hist(correlation_weights.flatten(),bins=100,log=True)
+    plt.savefig(prefix+"description/correlation_weight.png")
+
+    # plt.figure()
+    # plt.hist(np.log10(correlation_weights+1).flatten(),bins=100,log=True)
+    # plt.savefig(prefix+"description/correlation_weight_log.png")
+
+
+    plt.figure()
+    plt.hist(consensus_correlation.flatten(),bins=100, log=True)
+    plt.savefig(prefix+"description/consensus_hist.png")
+
+    # plt.figure()
+    # plt.hist(inverse_gene_distances.flatten(), bins = 100)
+    # plt.savefig(prefix+"description/inverse_dist.png")
+
+    plt.figure()
+    plt.hist(np.sum(correlation_weights, axis = 0), bins = 20)
+    plt.savefig(prefix + "description/weight_totals.png")
+
+    plt.figure()
+    plt.hist(np.sum(consensus_correlation, axis = 1), bins = 20)
+    plt.savefig(prefix + "description/correlation_totals.png")
+
+    plt.figure()
+    plt.hist(np.sum(inverse_gene_distances, axis = 0), bins = 20)
+    plt.savefig(prefix + "description/distance_totals.png")
+
 
     print "Computing the QC array"
 
@@ -111,12 +147,15 @@ def folded_correlation(observation_matrix, name = None, prefix = "", fold_number
     plt.hist(qc_array)
     plt.savefig(prefix + "corr_var_fold.png")
 
+    adjusted_consensus = np.divide(consensus_correlation, correlation_weights)
+
     if name != None:
         np.save(prefix + "folded_correlation_backup", np.nan_to_num(consensus_correlation))
+        np.save(prefix + "flat_fold_backup", adjusted_consensus)
         chk.write_hash(observation_matrix, "folded_correlation_backup.npy", prefix)
 
 
-    return consensus_correlation
+    return correlation_weights
 
 def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, name = "", prefix = ""):
 
@@ -230,11 +269,15 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
     plt.figure()
     plt.plot(recall, precision)
+    plt.title("Precision/Recall Curve")
     plt.xlabel("Recall (Capture rate)")
     plt.ylabel("Precision (Rate of true positives vs all positives)")
     plt.savefig(prefix + "pr_curve.png")
 
     plt.figure()
+    plt.title("Enrichment of True Edges Among Called Edges")
+    plt.xlabel("Correlation Cutoff for Adjacency")
+    plt.ylabel("Fold Enrichment")
     plt.plot(scroll,enrichment)
     plt.savefig(prefix + "enrichment.png")
 
@@ -247,7 +290,7 @@ def main():
     if len(sys.argv)> 2:
         observations = sys.argv[2]
     else:
-        observations = prefix + "folded_dev_matrix.npy"
+        observations = prefix + "cons_dev_matrix.npy"
 
     if len(sys.argv)> 3:
         gold = sys.argv[3]
@@ -261,7 +304,7 @@ def main():
 
     observations = matrix_assurance(observations)
     gold = matrix_assurance(gold)
-    custom_scroll = map(lambda x: float(x)*.01,range(1,50,1))
+    custom_scroll = map(lambda x: float(x)*.01,range(1,30,1))
 
 
 
