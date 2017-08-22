@@ -104,6 +104,55 @@ def partial_correlation(data):
 
     return partial_correlation
 
+def predict_masked(data, mask, slopes, intercepts, means, correlations, pval, truth = None):
+
+    raw_predicted = np.multiply(np.tile(cell,(slopes.shape[0],1)).T,slopes) + intercepts
+
+    unadjusted = np.mean(raw_predicted, axis = 0)
+
+    pvalue_derived_weights = np.power(pval,-10)
+    pvalue_derived_weights[pvalue_derived_weights > 1000000] = 1000000
+    pvalue_derived_weights[pvalue_derived_weights < .000001] = .000001
+    # pvalue_derived_weights = np.log10(pvalue_derived_weights)
+
+    pvalue_adjusted = np.average(raw_predicted, axis = 0, weights = pvalue_derived_weights)
+
+    correlation_derived_weights = np.power(1-np.abs(correlations), -1)
+    correlation_derived_weights[correlation_derived_weights > 1000] = 1000
+    correlation_derived_weights[mask] = 0
+
+    correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
+
+    if truth != None:
+        print "Truth To Mean"
+        print pearsonr(truth,means)
+        print "Guesses"
+        print "======="
+
+        print "Unadjusted"
+        print pearsonr(unadjusted,truth)
+        print "Inverse P Value Adjusted"
+        print pearsonr(pvalue_adjusted,truth)
+        print "Correlation Adjusted"
+        print pearsonr(correlation_adjusted,truth)
+
+        print "Centered Data"
+        print "======"
+        print pearsonr(unadjusted-means,truth-means)
+        print pearsonr(pvalue_adjusted-means,truth-means)
+        print pearsonr(correlation_adjusted-means,truth-means)
+        print "True sum"
+        print np.sum(np.abs(truth-means))
+        print "Prediction sums"
+        print np.sum(np.abs(unadjusted-means))
+        print np.sum(np.abs(pvalue_adjusted-means))
+        print np.sum(np.abs(correlation_adjusted-means))
+
+        print "\n\n"
+
+    return raw_predicted, pvalue_adjusted, correlation_adjusted
+
+
 def predict_cell(cell, slopes, intercepts, means, correlations, pval, truth = None ):
 
     raw_predicted = np.multiply(np.tile(cell,(slopes.shape[0],1)).T,slopes) + intercepts

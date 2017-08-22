@@ -19,8 +19,8 @@ import networkx as nx
 def describe(deviation_matrix, correlation_matrix, cell_identity, description = "./description/"):
 
     plt.figure()
-    plt.hist(deviation_matrix.flatten().T,bins=21)
-    plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*deviation_matrix.shape[0]*deviation_matrix.shape[1])
+    plt.hist(deviation_matrix.flatten().T,bins=101)
+    # plt.plot(np.linspace(-10,10,200),scipy.stats.norm.pdf(np.linspace(-10,10,200))*deviation_matrix.shape[0]*deviation_matrix.shape[1])
     plt.title("Frequency of Deviation From Neighbors (Std Deviations)")
     plt.ylabel("Number of Instances")
     plt.xlabel("Deviation (Standard Deviations)")
@@ -93,23 +93,27 @@ def describe(deviation_matrix, correlation_matrix, cell_identity, description = 
 
     gene_clustering = AgglomerativeClustering(n_clusters=100)
     plt.figure()
+    ax = plt.axes()
     sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
     print 4773
     print gene_clustering.fit_predict(sorted_singly.T).shape
     sorted_doubly = sorted_singly.T[np.argsort(gene_clustering.fit_predict(sorted_singly.T))]
-    plt.imshow(sorted_doubly.T, cmap='seismic')
+    sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
+    sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
+    im = ax.imshow(sorted_doubly, cmap='seismic')
     plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
     plt.xlabel("Genes")
     plt.ylabel("Cells")
+    plt.colorbar(im, ax=ax,shrink=.33)
     plt.savefig(description + "doubly_clustered.png",dpi=300)
 
     print np.max(sorted_doubly)
 
     plt.figure()
     double_sorting_mask = (cell_identity[:,2]>0)[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
-    raw = sorted_doubly.T[double_sorting_mask]
-    minmax = np.concatenate((raw,np.ones((raw.shape[0],1))*np.max(sorted_doubly)), axis=1)
-    minmax = np.concatenate((minmax,np.ones((raw.shape[0],1))*np.min(sorted_doubly)), axis=1)
+    raw = sorted_doubly[double_sorting_mask]
+    minmax = np.concatenate((raw,np.ones((raw.shape[0],1))*10), axis=1)
+    minmax = np.concatenate((minmax,np.ones((raw.shape[0],1))*-10), axis=1)
     plt.imshow(minmax,cmap='seismic')
     plt.title("Expression of Genes only in MPP Cells, Same Clustering")
     plt.xlabel("Genes")
@@ -130,7 +134,7 @@ def describe(deviation_matrix, correlation_matrix, cell_identity, description = 
     plt.savefig(description + "coexpression_clusters1.png",dpi=300)
 
     plt.figure()
-    plt.imshow(corr_sort_2 * 100, cmap='binary')
+    plt.imshow(corr_sort_2 * 1000000, cmap='binary')
     plt.title("Patterns of co-expression among genes")
     plt.savefig(description + "coexpression_clusters2.png",dpi=300)
 

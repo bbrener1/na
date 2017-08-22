@@ -39,6 +39,6 @@ import numpy.random as nprnd
 x = 0
 
 for i in np.arange(1,30000):
-    x += 30000.0/(i**3)
+    x += 30000.0/(i**2)
 
 print x

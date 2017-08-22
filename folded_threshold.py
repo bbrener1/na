@@ -203,42 +203,45 @@ def quick_threshold_analysis(observations, gold, scroll = None, presolve= None, 
 
 
 
-        model = LinearRegression()
-        plt.figure()
-        hist = plt.hist(degree_ratings, log=True, bins=50,alpha=.3,label= name)
-        # print hist
-        degree_hist = hist[0]
-        hist_coord = hist[1][:-1]
-        # print degree_hist
-        # print np.log(degree_hist)
-        # print hist_coord
-        degree_hist = degree_hist.reshape(-1,1)
-        hist_coord = hist_coord.reshape(-1,1)
-        # print degree_hist
-        # print np.log(degree_hist)
-        # print hist_coord
-        model.fit(hist_coord,np.log(degree_hist+1))
-        # print model.coef_
-        # print model.intercept_
-        m = model.coef_[0][0]
-        b = model.intercept_
-        # print "Where are the residuals?"
-        # print np.polyfit(degree_hist,range(degree_hist.shape[0]),1,full=True)
-        # m, b = np.polyfit(hist_coord,np.log(degree_hist),1, full=True)
-        # print m
-        # print b
-        # print m*hist_coord+b
-        # print np.exp(m*hist_coord+b)
-        plt.plot(hist_coord, np.exp(m*hist_coord+b),label= name)
-        plt.title("Node Degree Histogram (Small World Assumption)")
-        plt.xlabel("Node Degree")
-        plt.legend()
-        plt.savefig(name + str(tau) +".png")
+        # model = LinearRegression()
+        # plt.figure()
+        # hist_val, hist_edges = np.histogram(degree_ratings, bins=50)
+        # hist_ticks = np.zeros(50,dtype=str)
+        # hist_ticks[::10]=np.power(np.ones(5,dtype=int)*10,np.arange(5)).astype(dtype=str)
+        # hist = plt.bar(np.log(hist_edges[:-1]),hist_val,tick_label=hist_ticks ,label= "Frequency of Nodes of Given Degree (Raw Counts)")
+        # # print hist
+        # degree_hist = np.log(hist_val+1)
+        # hist_coord = np.log(hist_edges[:-1])
+        # # print degree_hist
+        # # print np.log(degree_hist)
+        # # print hist_coord
+        # degree_hist = degree_hist.reshape(-1,1)
+        # hist_coord = hist_coord.reshape(-1,1)
+        # # print degree_hist
+        # # print np.log(degree_hist)
+        # # print hist_coord
+        # model.fit(np.log(hist_coord),np.log(degree_hist+1))
+        # # print model.coef_
+        # # print model.intercept_
+        # m = model.coef_[0][0]
+        # b = model.intercept_
+        # # print "Where are the residuals?"
+        # # print np.polyfit(degree_hist,range(degree_hist.shape[0]),1,full=True)
+        # # m, b = np.polyfit(hist_coord,np.log(degree_hist),1, full=True)
+        # # print m
+        # # print b
+        # # print m*hist_coord+b
+        # # print np.exp(m*hist_coord+b)
+        # plt.plot(hist_coord, np.exp(m*hist_coord+b),label= "Linear fit in log-log space")
+        # plt.title("Node Degree Histogram (Small World Assumption)")
+        # plt.xlabel("Node Degree")
+        # plt.legend()
+        # plt.savefig(name + str(tau) +".png")
         # print degree_ratings.reshape(-1,1)
         # print degree_ratings > 1
         # print np.sum((degree_ratings) > 1)
-        # print tau
-        r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
+        # # print tau
+        # r2_stat[j] = r2_score(degree_hist,np.exp(m*hist_coord+b))
 
         if tau == .13:
             plot_edge_certainty(correlation,connectivity, prefix+"edge_certainty.png")
@@ -303,7 +306,7 @@ def main():
 
     observations = matrix_assurance(observations)
     gold = matrix_assurance(gold)
-    custom_scroll = map(lambda x: float(x)*.005,range(1,40,1))
+    custom_scroll = map(lambda x: float(x)*.01,range(1,20,1))
 
 
 

@@ -91,6 +91,9 @@ def translate_header(input_file, species = "mouse", prefix = "", test = False):
         counts = np.loadtxt(input_file,skiprows=1,usecols=np.arange(27,len(header)))
         np.save(prefix+"counts", counts)
 
+    print "Vision format debug 1"
+    print header[:50]
+
     error_count = 0
     error_list = []
 

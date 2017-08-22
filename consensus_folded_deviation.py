@@ -97,7 +97,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
         integer_mask = np.random.randint(fold, size=neighbor_setting)
 
-        neighborhood = counts[np.argsort(distance_matrix[i]) < neighbor_setting]
+        neighborhood = counts[np.argsort(distance_matrix[i])][:neighbor_setting]
 
         for j, cycle in enumerate(folds):
 

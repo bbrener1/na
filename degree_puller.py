@@ -24,7 +24,7 @@ def variance_discrepancy(deviation_matrix, counts, header):
 
     mean_deviation = np.mean(deviation_matrix, axis = 0)
 
-    variance_index = np.divide(np.sqrt(count_variance),np.power(deviation_variance,3))
+    variance_index = np.divide(count_variance,np.power(deviation_variance,3))
 
     mask = np.argsort(variance_index) > 4400
 
@@ -50,6 +50,8 @@ def variance_discrepancy(deviation_matrix, counts, header):
     #
     # variance_model.pdf()
 
+    return mask
+
 def high_degrees(correlation_matrix, threshold, header, filename = "TF_candidates_degree.txt"):
 
     degrees = np.sum(correlation_matrix > threshold,axis=0)
@@ -57,6 +59,8 @@ def high_degrees(correlation_matrix, threshold, header, filename = "TF_candidate
     degree_indecies = np.arange(degrees.shape[0])[np.argsort(degrees) > (degrees.shape[0] - degrees.shape[0]/10.0)]
 
     np.savetxt(filename, header[degree_indecies],fmt='%s')
+
+    return degrees
 
 counts = np.load(sys.argv[1])
 
@@ -68,6 +72,12 @@ header = np.load(sys.argv[4])
 
 threshold = float(sys.argv[5])
 
-high_degrees(correlation, threshold, header)
+degrees = high_degrees(correlation, threshold, header)
 
-variance_discrepancy(deviation_matrix, counts, header)
+variance_index = variance_discrepancy(deviation_matrix, counts, header)
+
+combo = np.logical_and(variance_index,degrees)
+
+print np.sum(combo)
+
+np.savetxt("TF_candidates_combined.txt", header[combo], fmt="%s")
