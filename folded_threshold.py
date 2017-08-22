@@ -306,7 +306,7 @@ def main():
 
     observations = matrix_assurance(observations)
     gold = matrix_assurance(gold)
-    custom_scroll = map(lambda x: float(x)*.01,range(1,20,1))
+    custom_scroll = map(lambda x: float(x)*.003,range(1,30,))
 
 
 
