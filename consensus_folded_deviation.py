@@ -99,6 +99,8 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
         neighborhood = counts[np.argsort(distance_matrix[i])][:neighbor_setting]
 
+
+
         for j, cycle in enumerate(folds):
 
             fold_mask = np.zeros(neighborhood.shape[0],dtype=bool)
@@ -117,6 +119,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
             std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
 
             # std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
+
 
 
 

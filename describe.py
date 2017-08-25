@@ -11,10 +11,17 @@ from matplotlib import pyplot as plt
 
 from matrix_assurance import *
 
+from scipy.cluster import hierarchy as hrc
+from sklearn.decomposition import PCA
+
 from sklearn.cluster import AgglomerativeClustering
 import networkx as nx
 
-
+# def linkage_labels(linkage, labels):
+#     for label in labels:
+#         final_labels = np.zeros(linkage.shape[0])
+#         indecies = []
+#         for layer in linkage
 
 def describe(deviation_matrix, correlation_matrix, cell_identity, description = "./description/"):
 
@@ -70,41 +77,76 @@ def describe(deviation_matrix, correlation_matrix, cell_identity, description = 
     # plt.savefig(description + "sorted2.png",dpi=300)
     # print "Saved"
 
-    plt.figure()
+    plt.figure(figsize=(4,8))
     sorted3 = sorted2.T
     plt.imshow(sorted3,cmap='seismic')
     plt.savefig(description + "doubly_sorted.png",dpi=300)
 
 
-    cell_clustering = AgglomerativeClustering(n_clusters=100)
-    plt.figure()
-    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
-    sorted_doubly = sorted_singly.T[np.argsort(np.mean(sorted_singly,axis=0))].T
-    plt.imshow(sorted_doubly,cmap="seismic")
+    cell_linked = hrc.linkage(deviation_matrix, method='average', metric='cosine')
+    clusterization = hrc.fcluster(cell_linked, criterion='inconsistent',t=.5,)
+    cell_dendrogram = hrc.dendrogram(cell_linked,no_plot=True)
+    fig = plt.figure()
+    ax1 = fig.add_axes([.09,.1,.2,.6])
+    display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
+    ax1.set_xlim(xmin=1,xmax=.9)
+    ax1.set_xscale('log')
+    ax2 = fig.add_axes([.3,.1,.6,.6])
+    # print cell_dendrogram['ivl']
+    # print cell_dendrogram['leaves']
+
+
+    # print doubly_sorted_indecies
+
+    sorted_doubly = deviation_matrix[cell_dendrogram['leaves']]
+    plt.imshow(sorted_doubly,cmap="seismic",aspect='auto')
     plt.savefig(description + "clustered.png", dpi=300)
 
-    plt.figure()
-    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
-    print 1656
-    print cell_clustering.fit_predict(deviation_matrix).shape
-    sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
-    plt.imshow(sorted_doubly,cmap="seismic")
-    plt.savefig(description + "clustered_variance.png", dpi=300)
+    # plt.figure()
+    # # sorted_singly = deviation_matrix[cell_dendrogram]
+    # print 1656
+    # # print cell_clustering.fit_predict(deviation_matrix).shape
+    # # sorted_doubly = sorted_singly.T[np.argsort(np.var(sorted_singly,axis=0))].T
+    # plt.imshow(sorted_doubly,cmap="seismic",aspect='auto')
+    # plt.savefig(description + "clustered_variance.png", dpi=300)
 
-    gene_clustering = AgglomerativeClustering(n_clusters=100)
-    plt.figure()
-    ax = plt.axes()
-    sorted_singly = deviation_matrix[np.argsort(cell_clustering.fit_predict(deviation_matrix))]
-    print 4773
-    print gene_clustering.fit_predict(sorted_singly.T).shape
-    sorted_doubly = sorted_singly.T[np.argsort(gene_clustering.fit_predict(sorted_singly.T))]
+
+
+
+    gene_linked = hrc.linkage(deviation_matrix.T, method='average', metric='correlation')
+    gene_dendrogram = hrc.dendrogram(gene_linked,no_plot=True)
+    fig = plt.figure(figsize=(8,4))
+    ax1 = fig.add_axes([.09,.1,.2,.6])
+    # display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
+    with plt.rc_context({'lines.linewidth':0.1}):
+        display_dendrogram = hrc.dendrogram(cell_linked,orientation='left',ax=ax1)
+    ax1.set_xlim(left=1.0,right=.75)
+    ax1.set_xscale('log')
+
+    ax2 = fig.add_axes([.3,.71,.55,.2])
+    # display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
+    with plt.rc_context({'lines.linewidth':0.1}):
+        display_dendrogram = hrc.dendrogram(cell_linked, ax=ax2)
+    ax2.set_ylim(top=1,bottom=.75)
+    ax2.set_yscale('log')
+
+    print sorted_doubly.shape
+    print len(cell_dendrogram['leaves'])
+    print len(gene_dendrogram['leaves'])
+
+
+    ax3 = fig.add_axes([.3,.1,.55,.6])
+
+    sorted_doubly = sorted_doubly.T[gene_dendrogram['leaves']]
     sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
     sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
-    im = ax.imshow(sorted_doubly, cmap='seismic')
-    plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
-    plt.xlabel("Genes")
-    plt.ylabel("Cells")
-    plt.colorbar(im, ax=ax,shrink=.33)
+    im = ax3.imshow(sorted_doubly, cmap='seismic', aspect='auto')
+    # plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
+    # plt.xlabel("Genes")
+    # plt.ylabel("Cells")
+    ax4 = fig.add_axes([.85,.1,.05,.6])
+    ax4.set_ylim(bottom=-10,top=10)
+    fig.colorbar(mappable=im, fraction=.99, ax=ax4)
     plt.savefig(description + "doubly_clustered.png",dpi=300)
 
     print np.max(sorted_doubly)
