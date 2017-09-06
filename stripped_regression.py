@@ -50,7 +50,6 @@ class stripped_regression:
 
             print pick
 
-
             self.predict_cell(self.counts[pick,:], self.slopes, self.intercepts, self.means, self.correlations, self.partial, truth = self.counts[pick,:])
 
 
@@ -106,10 +105,17 @@ class stripped_regression:
 
         return partial_correlation
 
-    def predict_cell(self, cell, index = False, truth = None ):
+    def predict_cell(self, cell, index = False, truth = None, verbose = True):
 
         if index:
             cell = self.counts[cell,:]
+
+        ## In raw predicted, i,j is the value of gene j in the target cell, predicted based on gene i
+
+        ## Column j of prediction matrix is all predictions of gene j in the cell. Mean of column j is
+        ## mean of predictions
+
+        ## Row i is cell state predicted by individual gene.
 
         raw_predicted = np.multiply(np.tile(cell,(self.slopes.shape[0],1)).T,self.slopes) + self.intercepts
 
@@ -120,7 +126,17 @@ class stripped_regression:
 
         correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
 
-        if truth != None:
+        dropout_adjusted = np.zeros((raw_predicted.shape[1],raw_predicted.shape[1]))
+
+        # Predictied value i given dropout of j
+
+        for i, column in self.counts.T:
+            drop_weights = np.copy(correlation_derived_weights)
+            drop_weights[:,i] = np.zeros(temp_weights.shape[1])
+            dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = temp_weights)
+
+
+        if truth != None and verbose:
             print "Truth To Mean"
             print pearsonr(truth,means)
             print "Guess"
@@ -143,7 +159,64 @@ class stripped_regression:
 
             print "\n\n"
 
-        return correlation_adjusted
+        return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
+
+    def masked_predict(self, cell, index = False, truth = None , mask= None, verbose = True):
+
+        if index:
+            cell = self.counts[cell,:]
+
+        raw_predicted = np.multiply(np.tile(cell,(self.slopes.shape[0],1)).T,self.slopes) + self.intercepts
+
+        unadjusted = np.mean(raw_predicted, axis = 0)
+
+        correlation_derived_weights = np.power(1-np.abs(self.correlations), -1)
+        correlation_derived_weights[correlation_derived_weights > 1000] = 1000
+
+        # Ignores any values that are 0 if the mask is not specified
+
+        if mask == None:
+            mask = cell == 0
+
+        correlation_derived_weights[mask] = np.zeros(correlation_derived_weights.shape[1])
+
+
+        correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
+
+        # Predictied value i given dropout of j
+
+        dropout_adjusted = np.zeros((raw_predicted.shape[1],raw_predicted.shape[1]))
+
+        for i, column in self.counts.T:
+            drop_weights = np.copy(correlation_derived_weights)
+            drop_weights[:,i] = np.zeros(temp_weights.shape[1])
+            dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = temp_weights)
+
+
+        if truth != None and verbose:
+            print "Truth To Mean"
+            print pearsonr(truth,means)
+            print "Guess"
+            print "======="
+
+            # print "Unadjusted"
+            # print pearsonr(unadjusted,truth)
+            print "Correlation Adjusted"
+            print pearsonr(correlation_adjusted,truth)
+
+            print "Centered Data"
+            print "======"
+            # print pearsonr(unadjusted-means,truth-means)
+            print pearsonr(correlation_adjusted-means,truth-means)
+            print "True sum"
+            print np.sum(np.abs(truth-means))
+            print "Prediction sum"
+            # print np.sum(np.abs(unadjusted-means))
+            print np.sum(np.abs(correlation_adjusted-means))
+
+            print "\n\n"
+
+        return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
 
     # def predict_gene(gene, index,  slopes,intercepts, correlations, pval, truth = None):
     #

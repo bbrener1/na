@@ -13,6 +13,7 @@ import stripped_regression
 
 from sklearn.decomposition import PCA
 import scipy.spatial.distance as spt
+from scipy.stats import pearsonr
 
 def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
 
@@ -37,7 +38,7 @@ def main():
 
     print "Counts loaded:"
 
-    # print counts.shape
+    print counts.shape
 
     linear_model = stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix)
 
@@ -45,13 +46,98 @@ def main():
 
     linear_model.test()
 
+    print "Testing initial self-predictive power."
 
-    dist_model = PCA(n_components=50)
-    dist_interm = dist_model.fit_transform(counts)
-    dist = spt.squareform(spt.pdist(dist_interm))
+    mean_matrix = np.tile(np.mean(counts,axis=0),(counts.shape[0],1))
 
-    for gene in counts
+    print "Masked prediction:"
 
+    masked_imputed = np.zeros(counts.shape)
+
+    for i, cell in enumerate(counts):
+
+        masked_imputed[i] = linear_model.masked_predict(cell, verbose = False)[0]
+
+        if i%100 == 0:
+            print i
+
+    print "Masked prediction self-correlation:"
+    print pearsonr(counts[counts > 0], masked_imputed[counts > 0])
+
+    print "Count correlation to means:"
+    print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
+
+    print "Naive prediction:"
+
+    naive_imputed = np.zeros(counts.shape)
+
+    for i, cell in enumerate(counts):
+
+        naive_imputed[i] = linear_model.predict_cell(cell, verbose = False)[0]
+
+        if i%100 == 0:
+            print i
+
+    print "Naive linear model self-correlation:"
+    print pearsonr(counts[counts > 0], naive_imputed[counts > 0])
+    print "Count correlation to means:"
+    print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
+
+
+    print "Sequential naive prediction:"
+    second_naive = np.zeros(counts.shape)
+
+    for i, cell in enumerate(naive_imputed):
+
+        second_naive = linear_model.predict_cell(cell, verbose = False)[0]
+
+        if i%100 == 0:
+            print i
+
+    print "Sequential naive prediction self-correlation:"
+    print pearsonr(counts, second_naive)
+    print "Sequential naive prediction (non-zero only):"
+    print pearsonr(counts[counts > 0], second_naive[counts > 0])
+
+    # dist_model = PCA(n_components=50)
+    # dist_interm = dist_model.fit_transform(counts)
+    # dist = spt.squareform(spt.pdist(dist_interm))
+
+
+
+
+def predict_by_neighbor(counts, distances, neighbors, model):
+
+    output.write("Computing by neighbors:\n")
+
+    for i, row in enumerate(neighbor_mean_matrix):
+
+        integer_mask = np.random.randint(fold, size=neighbor_setting)
+
+        neighborhood = counts[np.argsort(distance_matrix[i]) < neighbor_setting]
+
+        for j, cycle in enumerate(folds):
+
+            fold_mask = np.zeros(neighborhood.shape[0],dtype=bool)
+            for element in cycle:
+                fold_mask = np.logical_or(fold_mask,integer_mask == element)
+
+            # print cycle
+            # print integer_mask
+            # print fold_mask
+            # print neighbor_mean_matrix.shape
+            # print std_dev_matrix.shape
+            # print np.mean(neighborhood[fold_mask],axis=0)
+
+            neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+
+            std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
+
+
+
+        if i%100 == 0:
+            output.write(str(i) + "\n")
+            print i
 
 
 
