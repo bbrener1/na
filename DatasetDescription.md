@@ -14,3 +14,9 @@ And the normalization procedure used to generate the normalized DE matrix provid
 https://doi.org/10.1186/s13059-016-0947-7
 > Lun, Aaron TL, Karsten Bach, and John C. Marioni. "Pooling across cells to normalize single-cell RNA sequencing data with many zero counts." Genome biology 17, no. 1 (2016): 75.	
 
+## What's In This Dataset?
+
+In its raw form the dataset is a 1656x4773 matrix of numeric values, each row representing cells and each column representing the differential expression of a gene in Log2 space. Additionally, the matrix contains fluorescence values for various FACS readouts, mostly antibodies against membrane proteins, but also including DAPI. Finally the first 3 columns are a set of 3 coordinates mapping each cell to a location in a 3D diffusion map. 
+
+## How do the values look?
+
