@@ -224,7 +224,7 @@ def main():
         filename = "cons_dev_matrix"
 
 
-
+    output = None
     counts = matrix_assurance(counts)
     gold_network = matrix_assurance(gold_network)
 
