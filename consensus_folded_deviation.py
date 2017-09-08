@@ -64,15 +64,15 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     output.write(str(int_sum[:10]) + "\n")
     output.write(str(type(int_sum)) + "\n")
 
-    dropout_mask = (int_sum > 0)
+    dropout_mask = (int_sum > 20)
 
     output.write(str(dropout_mask.shape) + "\n")
     output.write(str(np.sum(dropout_mask)) + "\n")
 
     counts = counts[:,dropout_mask]
 
-    output.write("Shape of counts after dropping zeored columns:")
-    output.write(str(counts.shape))
+    output.write("Shape of counts after dropping zeored columns:\n")
+    output.write(str(counts.shape) + "\n")
 
     #
     # distance_matrix = np.zeros((counts.shape[0],counts.shape[0]))
