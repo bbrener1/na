@@ -17,6 +17,9 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
+import check_hash as chk
+
+
 def compact_regression(l):
     result = (linregress(l[0],l[1]),l[2],l[3])
     return result

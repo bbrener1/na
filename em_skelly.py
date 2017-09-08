@@ -15,16 +15,7 @@ from sklearn.decomposition import PCA
 import scipy.spatial.distance as spt
 from scipy.stats import pearsonr
 
-def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
-
-    predicted_counts = np.zeros(cell_matrix.shape)
-
-    for i, cell in enumerate(cell_matrix):
-        predicted_counts[i] = linear_model.predict_cell(cell)
-
-    distance_weights = np.divide(1, np.power((1+iteration/50), distances))
-
-    np.average()
+import consensus_folded_deviation as cfd
 
 def main():
 
@@ -99,6 +90,15 @@ def main():
     print "Sequential naive prediction (non-zero only):"
     print pearsonr(counts[counts > 0], second_naive[counts > 0])
 
+    print "Computing deviation means:"
+
+    deviation_medians = np.median(cfd.folded_deviation_matrix(counts)[3], axis=2)
+
+    print "Prediction of non-zero values through deviation means:"
+    print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
+    print "Predictions of all values through deviation means:"
+    print pearsonr(counts, deviation_medians)
+
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
     # dist = spt.squareform(spt.pdist(dist_interm))
@@ -139,6 +139,16 @@ def predict_by_neighbor(counts, distances, neighbors, model):
             output.write(str(i) + "\n")
             print i
 
+# def predict_gene_counts(cell_matrix, iteration, distances, linear_model):
+#
+#     predicted_counts = np.zeros(cell_matrix.shape)
+#
+#     for i, cell in enumerate(cell_matrix):
+#         predicted_counts[i] = linear_model.predict_cell(cell)
+#
+#     distance_weights = np.divide(1, np.power((1+iteration/50), distances))
+#
+#     np.average()
 
 
 
