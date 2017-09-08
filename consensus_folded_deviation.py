@@ -67,6 +67,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     dropout_mask = (int_sum > 0)
 
     output.write(str(dropout_mask.shape) + "\n")
+    output.write(str(np.sum(dropout_mask)) + "\n")
 
     counts = counts[:,dropout_mask]
 
