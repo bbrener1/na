@@ -204,7 +204,7 @@ def main():
 
 
     if len(sys.argv)>3:
-        counts = np.loadtxt(sys.argv[3]).T
+        counts = np.loadtxt(sys.argv[3])
     else:
         counts = prefix + "counts.npy"
 
