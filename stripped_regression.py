@@ -44,6 +44,8 @@ class stripped_regression:
         else:
             self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts)
 
+        self.imputed_counts = None
+
         self.partial = self.partial_correlation(self.counts)
 
 
@@ -56,7 +58,12 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], self.slopes, self.intercepts, self.means, self.correlations, self.partial, truth = self.counts[pick,:])
 
 
-    def parallel_regression(self, counts):
+    def parallel_regression(self, counts = None):
+
+        if counts == None:
+            counts = self.counts
+
+        chk.check_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix)
 
         slopes = np.zeros((counts.shape[1],counts.shape[1]))
 
@@ -68,7 +75,7 @@ class stripped_regression:
 
         pval = np.zeros((counts.shape[1],counts.shape[1]))
 
-        pool = mlt.Pool(processes=mlt.cpu_count()-2)
+        pool = mlt.Pool(max(processes=mlt.cpu_count()-2,20))
         # pool = mlt.Pool(processes=10)
 
         print "Parallel Regression Started"
@@ -80,7 +87,7 @@ class stripped_regression:
             intercepts[c[1],c[2]] = c[0][1]
             correlations[c[1],c[2]] = c[0][2]
             pval[c[1],c[2]] = c[0][3]
-            if i%10000==0:
+            if i%1000000==0:
                 print i
 
         slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
@@ -95,6 +102,12 @@ class stripped_regression:
         np.save(self.prefix + "pval_lin_reg", pval)
         np.save(self.prefix + "means_lin_reg", means)
 
+        chk.write_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix)
+
+        self.slopes = slopes
+        self.intercepts = intercepts
+        self.correlations = correlations
+        self.pval = pval
 
         return slopes,intercepts,means,correlations,pval
 

@@ -39,7 +39,7 @@ def main():
 
     print "Testing initial self-predictive power."
 
-    mean_matrix = np.tile(np.mean(counts,axis=0),(counts.shape[0],1))
+    mean_matrix = np.tile(linear_model.means,(counts.shape[0],1))
 
     print "Masked prediction:"
 
