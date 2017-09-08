@@ -18,13 +18,15 @@ from matplotlib import pyplot as plt
 from matrix_assurance import *
 
 
-def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5):
+def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5, verbose = True):
 
     if output == None:
         output = sys.stdout
     elif isinstance(output,str):
         output = open(output,mode='w')
 
+    if not verbose:
+        output = open(os.devnull, mode='w')
 
 
     if not isinstance(output,file):
@@ -150,6 +152,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     plt.figure()
     plt.hist(qc_array)
+    plt.title("Coefficients of Inter-Fold Variation, Deviation Matrix")
     plt.savefig(pretag + "coef_var_fold.png")
 
     output.write("Neighbor mean matrix content:\n")
@@ -175,13 +178,13 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     np.save( pretag + filename,deviation_matrix)
     np.save( pretag + "numeric_" + filename, numeric_deviation_matrix)
-    np.save( pretag + "dropout_" + filename,dropout_mask)
+    np.save( pretag + "dropout_" + filename, dropout_mask)
     np.save( pretag + "std_dev_" + filename, std_dev_matrix)
     chk.write_hash(counts,filename +".npy", pretag)
 
     output.write(str( deviation_matrix[:10,:10]) + "\n")
 
-    return deviation_matrix, dropout_mask
+    return deviation_matrix, dropout_mask, numeric_deviation_matrix, neighbor_mean_matrix
 
 
 def simple(folder):
