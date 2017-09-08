@@ -71,6 +71,9 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
 
     counts = counts[:,dropout_mask]
 
+    output.write("Shape of counts after dropping zeored columns:")
+    output.write(str(counts.shape))
+
     #
     # distance_matrix = np.zeros((counts.shape[0],counts.shape[0]))
     #
