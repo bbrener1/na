@@ -18,7 +18,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 import check_hash as chk
-
+from matrix_assurance import matrix_assurance
 
 def compact_regression(l):
     result = (linregress(l[0],l[1]),l[2],l[3])
@@ -30,7 +30,7 @@ class stripped_regression:
 
     def __init__(self, counts, solved=False, prefix=""):
 
-        self.counts = np.load(counts)
+        self.counts = matrix_assurance(counts)
         self.prefix = prefix
 
         print "Main successful"
