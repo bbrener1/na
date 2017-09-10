@@ -144,7 +144,7 @@ class stripped_regression:
 
         # Predictied value i given dropout of j
 
-        for i, column in self.counts.T:
+        for i, column in enumerate(self.counts.T):
             drop_weights = np.copy(correlation_derived_weights)
             drop_weights[:,i] = np.zeros(temp_weights.shape[1])
             dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = temp_weights)
