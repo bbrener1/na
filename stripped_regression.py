@@ -155,7 +155,7 @@ class stripped_regression:
 
         total_weights = np.sum(correlation_derived_weights, axis = 0)
 
-        relative_weights = np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights,1)))
+        relative_weights = np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights.shape[0],1)))
 
         influence = np.multiply(raw_predicted, relative_weights)
 
