@@ -155,7 +155,7 @@ class stripped_regression:
 
         for i in range(raw_predicted.shape[1]):
             sliced_weights = correlation_derived_weights[i]
-            correlation_derived_weights[i] = np.zeros(drop_weights.shape[1])
+            correlation_derived_weights[i] = np.zeros(correlation_derived_weights.shape[1])
             dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
             correlation_derived_weights[i] = sliced_weights
             if i%100 == 0:
