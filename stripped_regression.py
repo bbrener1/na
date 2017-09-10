@@ -147,6 +147,8 @@ class stripped_regression:
 
         correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
 
+        print "Computed correlation adjusted values, computing dropouts:"
+
         dropout_adjusted = np.zeros((raw_predicted.shape[1],raw_predicted.shape[1]))
 
         # Predictied value i given dropout of j
@@ -155,7 +157,8 @@ class stripped_regression:
             drop_weights = np.copy(correlation_derived_weights)
             drop_weights[i] = np.zeros(drop_weights.shape[1])
             dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = drop_weights)
-
+            if i%100 == 0:
+                print i
 
         if truth != None and verbose:
             print "Truth To Mean"
