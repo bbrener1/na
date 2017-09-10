@@ -47,7 +47,7 @@ def main():
 
     for i, cell in enumerate(counts):
 
-        masked_imputed[i] = linear_model.masked_predict(cell, verbose = False)[0]
+        masked_imputed[i] = linear_model.predict_cell(cell, verbose = False, masked = True)[0]
 
         if i%100 == 0:
             print i
