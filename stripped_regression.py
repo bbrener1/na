@@ -106,6 +106,7 @@ class stripped_regression:
         self.intercepts = intercepts
         self.correlations = correlations
         self.pval = pval
+        self.means = means
 
         return slopes,intercepts,means,correlations,pval
 
@@ -164,7 +165,7 @@ class stripped_regression:
 
         if truth != None and verbose:
             print "Truth To Mean"
-            print pearsonr(truth,means)
+            print pearsonr(truth,self.means)
             print "Guess"
             print "======="
 
@@ -176,12 +177,12 @@ class stripped_regression:
             print "Centered Data"
             print "======"
             # print pearsonr(unadjusted-means,truth-means)
-            print pearsonr(correlation_adjusted-means,truth-means)
+            print pearsonr(correlation_adjusted-self.means,truth-self.means)
             print "True sum"
-            print np.sum(np.abs(truth-means))
+            print np.sum(np.abs(truth-self.means))
             print "Prediction sum"
             # print np.sum(np.abs(unadjusted-means))
-            print np.sum(np.abs(correlation_adjusted-means))
+            print np.sum(np.abs(correlation_adjusted-self.means))
 
             print "\n\n"
 
