@@ -148,7 +148,7 @@ class stripped_regression:
 
         correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
 
-        print "Computed correlation adjusted values, computing dropouts:"
+        # print "Computed correlation adjusted values, computing dropouts:"
 
         # Predictied value j given dropout of i
 
@@ -174,10 +174,11 @@ class stripped_regression:
             print "Correlation Adjusted"
             print pearsonr(correlation_adjusted,truth)
 
-            print "Centered Data"
             print "======"
+            print "Centered Data"
             # print pearsonr(unadjusted-means,truth-means)
             print pearsonr(correlation_adjusted-self.means,truth-self.means)
+            print "======"
             print "True sum"
             print np.sum(np.abs(truth-self.means))
             print "Prediction sum"
