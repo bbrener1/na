@@ -154,9 +154,10 @@ class stripped_regression:
         # Predictied value i given dropout of j
 
         for i in range(raw_predicted.shape[1]):
-            drop_weights = np.copy(correlation_derived_weights)
-            drop_weights[i] = np.zeros(drop_weights.shape[1])
-            dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = drop_weights)
+            sliced_weights = correlation_derived_weights[i]
+            correlation_derived_weights[i] = np.zeros(drop_weights.shape[1])
+            dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
+            correlation_derived_weights[i] = sliced_weights
             if i%100 == 0:
                 print i
 
