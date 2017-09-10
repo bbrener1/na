@@ -149,17 +149,15 @@ class stripped_regression:
 
         print "Computed correlation adjusted values, computing dropouts:"
 
-        dropout_adjusted = np.zeros((raw_predicted.shape[1],raw_predicted.shape[1]))
+        # Predictied value j given dropout of i
 
-        # Predictied value i given dropout of j
+        ## Compute influence of each individual prediction on the weighted average:
 
-        for i in range(raw_predicted.shape[1]):
-            sliced_weights = correlation_derived_weights[i]
-            correlation_derived_weights[i] = np.zeros(correlation_derived_weights.shape[1])
-            dropout_adjusted[i] = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
-            correlation_derived_weights[i] = sliced_weights
-            if i%100 == 0:
-                print i
+        total_weights = np.sum(correlation_derived_weights, axis = 0)
+        influence = raw_predicted * (correlation_derived_weights / np.tile(total_weights, (correlation_derived_weights,1))
+
+        dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
+        
 
         if truth != None and verbose:
             print "Truth To Mean"
