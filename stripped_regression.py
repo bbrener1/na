@@ -159,7 +159,7 @@ class stripped_regression:
         dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
 
 
-        if truth != None and verbose:
+        if str(truth) != "None" and verbose:
             print "Truth To Mean"
             print pearsonr(truth,means)
             print "Guess"
