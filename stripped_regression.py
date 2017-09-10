@@ -154,12 +154,13 @@ class stripped_regression:
         ## Compute influence of each individual prediction on the weighted average:
 
         total_weights = np.sum(correlation_derived_weights, axis = 0)
-        influence = raw_predicted * (correlation_derived_weights / np.tile(total_weights, (correlation_derived_weights,1)))
+
+        influence = np.multiply(raw_predicted,(np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights,1)))))
 
         dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
 
 
-        if str(truth) != "None" and verbose:
+        if truth != None and verbose:
             print "Truth To Mean"
             print pearsonr(truth,means)
             print "Guess"
