@@ -35,7 +35,7 @@ class stripped_regression:
 
         print "Main successful"
 
-        if solved:
+        if solved or chk.check_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix):
             self.slopes = np.load(prefix + "slopes_lin_reg.npy")
             self.intercepts = np.load(prefix + "intercepts_lin_reg.npy")
             self.means = np.load(prefix + "means_lin_reg.npy")
@@ -55,15 +55,13 @@ class stripped_regression:
 
             print pick
 
-            self.predict_cell(self.counts[pick,:], self.slopes, self.intercepts, self.means, self.correlations, self.partial, truth = self.counts[pick,:])
+            self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:])
 
 
     def parallel_regression(self, counts = None):
 
         if counts == None:
             counts = self.counts
-
-        chk.check_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix)
 
         slopes = np.zeros((counts.shape[1],counts.shape[1]))
 
