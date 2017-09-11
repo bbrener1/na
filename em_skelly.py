@@ -43,16 +43,16 @@ def main():
 
     print "Masked prediction:"
 
-    masked_imputed = np.zeros(counts.shape)
+    masked_imputed = linear_model.multi_prediction(counts, override=True)
 
-    for i, cell in enumerate(counts):
-
-        masked_imputed[i] = linear_model.predict_cell(cell, verbose = True, masked = True)[0]
-
-        print masked_imputed[i,:10]
-
-        if i%100 == 0:
-            print i
+    # for i, cell in enumerate(counts):
+    #
+    #     masked_imputed[i] = linear_model.predict_cell(cell, verbose = True, masked = True)[0]
+    #
+    #     print masked_imputed[i,:10]
+    #
+    #     if i%100 == 0:
+    #         print i
 
     print "Masked prediction self-correlation:"
     print pearsonr(counts[counts > 0], masked_imputed[counts > 0])
@@ -62,14 +62,16 @@ def main():
 
     print "Naive prediction:"
 
-    naive_imputed = np.zeros(counts.shape)
+    naive_imputed = linear_model.multi_prediction(counts, override=True, masked=False)
 
-    for i, cell in enumerate(counts):
-
-        naive_imputed[i] = linear_model.predict_cell(cell, verbose = False)[0]
-
-        if i%100 == 0:
-            print i
+    # naive_imputed = np.zeros(counts.shape)
+    #
+    # for i, cell in enumerate(counts):
+    #
+    #     naive_imputed[i] = linear_model.predict_cell(cell, verbose = False)[0]
+    #
+    #     if i%100 == 0:
+    #         print i
 
     print "Naive linear model self-correlation:"
     print pearsonr(counts[counts > 0], naive_imputed[counts > 0])
@@ -77,15 +79,20 @@ def main():
     print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
 
 
-    print "Sequential naive prediction:"
-    second_naive = np.zeros(counts.shape)
+    print "Sequential naive prediction, no initial override:"
 
-    for i, cell in enumerate(naive_imputed):
+    first_naive = linear_model.multi_prediction(counts)
 
-        second_naive = linear_model.predict_cell(cell, verbose = False)[0]
+    second_naive = linear_model.multi_prediction(first_naive, override = True)
 
-        if i%100 == 0:
-            print i
+    # second_naive = np.zeros(counts.shape)
+    #
+    # for i, cell in enumerate(naive_imputed):
+    #
+    #     second_naive = linear_model.predict_cell(cell, verbose = False)[0]
+    #
+    #     if i%100 == 0:
+    #         print i
 
     print "Sequential naive prediction self-correlation:"
     print pearsonr(counts, second_naive)

@@ -25,6 +25,12 @@ def compact_regression(l):
     return result
 
 
+def compact_prediction(l):
+    result = predict_cell(l[0], verbose=False, masked=True)[0]
+    if l[1]%100==0:
+        print l[1]
+    return result
+
 class stripped_regression:
 
 
@@ -195,6 +201,32 @@ class stripped_regression:
             print "\n\n"
 
         return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
+
+    def multi_prediction(self, counts, masked=True, override = False, process_limit = self.process_limit):
+
+        print "Starting Parallel Prediction"
+
+        if process_limit:
+            pool = mlt.Pool(min(processes=mlt.cpu_count()-2,20))
+        else:
+            pool = mlt.Pool(processes=mlt.cpu_count()-2)
+
+        result = pool.map(compact_prediction, zip(counts,range(counts.shape[0])))
+
+        predicted_array = np.asarray(result.get())
+
+        print "Computed predicted array, shape:"
+        print predicted_array.shape
+
+        if override:
+            return predicted_array
+        else:
+            combined = np.copy(counts)
+            combined[combined == 0] = predicted_array[combined == 0]
+            print "Returning combined array of shape:"
+            print combined.shape
+            return combined
+
 
     # def masked_predict(self, cell, index = False, truth = None , mask= None, verbose = True):
     #

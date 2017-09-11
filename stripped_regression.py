@@ -24,14 +24,18 @@ def compact_regression(l):
     result = (linregress(l[0],l[1]),l[2],l[3])
     return result
 
+def compact_prediction(l):
+    result = predict_cell(l, verbose=False, masked=True)[0]
+    return result
 
 class stripped_regression:
 
 
-    def __init__(self, counts, solved=False, prefix=""):
+    def __init__(self, counts, solved=False, prefix="", process_limit = False):
 
         self.counts = matrix_assurance(counts)
         self.prefix = prefix
+        self.process_limit = process_limit
 
         print "Main successful"
 
@@ -42,7 +46,7 @@ class stripped_regression:
             self.correlations = np.load(prefix + "correlations_lin_reg.npy")
             self.pval = np.load(prefix + "pval_lin_reg.npy")
         else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts)
+            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, process_limit = self.process_limit)
 
         self.imputed_counts = None
 
@@ -58,7 +62,7 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:])
 
 
-    def parallel_regression(self, counts = None):
+    def parallel_regression(self, counts = None, process_limit = False):
 
         if str(counts) == "None":
             counts = self.counts
@@ -73,8 +77,10 @@ class stripped_regression:
 
         pval = np.zeros((counts.shape[1],counts.shape[1]))
 
-        pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
-        # pool = mlt.Pool(processes=10)
+        if process_limit:
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
+        else:
+            pool = mlt.Pool(processes=mlt.cpu_count()-2)
 
         print "Parallel Regression Started"
 
@@ -194,6 +200,34 @@ class stripped_regression:
             print "\n\n"
 
         return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
+
+    def multi_prediction(self, counts, masked=True, override = False, process_limit = self.process_limit):
+
+        print "Starting Parallel Prediction"
+
+        if process_limit:
+            pool = mlt.Pool(min(processes=mlt.cpu_count()-2,20))
+        else:
+            pool = mlt.Pool(processes=mlt.cpu_count()-2)
+
+        result = pool.map(compact_prediction, counts)
+
+        predicted_array = np.asarray(result.get())
+
+        print "Computed predicted array, shape:"
+        print predicted_array.shape
+
+        if override:
+            return predicted_array
+        else:
+            combined = np.copy(counts)
+            combined[combined == 0] = predicted_array[combined == 0]
+            print "Returning combined array of shape:"
+            print combined.shape
+            return combined
+
+
+
 
     # def masked_predict(self, cell, index = False, truth = None , mask= None, verbose = True):
     #
