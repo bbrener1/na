@@ -136,7 +136,7 @@ class stripped_regression:
 
         unadjusted = np.mean(raw_predicted, axis = 0)
 
-        correlation_derived_weights = np.power(1-np.abs(self.correlations), -1)
+        correlation_derived_weights = np.power(1-np.abs(self.correlations), -2)
         correlation_derived_weights[correlation_derived_weights > 1000] = 1000
 
         if masked:
@@ -182,13 +182,13 @@ class stripped_regression:
 
             print "======"
             print "Centered Data"
-            # print pearsonr(unadjusted-means,truth-means)
+            print pearsonr(unadjusted-means,truth-means)
             print pearsonr(correlation_adjusted-self.means,truth-self.means)
             print "======"
             print "True sum"
             print np.sum(np.abs(truth-self.means))
             print "Prediction sum"
-            # print np.sum(np.abs(unadjusted-means))
+            print np.sum(np.abs(unadjusted-means))
             print np.sum(np.abs(correlation_adjusted-self.means))
 
             print "\n\n"
