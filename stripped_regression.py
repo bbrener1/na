@@ -182,7 +182,7 @@ class stripped_regression:
 
             print "======"
             print "Centered Data"
-            print pearsonr(unadjusted-means,truth-self.means)
+            print pearsonr(unadjusted-self.means,truth-self.means)
             print pearsonr(correlation_adjusted-self.means,truth-self.means)
             print "======"
             print "True sum"
