@@ -60,7 +60,7 @@ class stripped_regression:
 
     def parallel_regression(self, counts = None):
 
-        if counts == None:
+        if str(counts) == "None":
             counts = self.counts
 
         slopes = np.zeros((counts.shape[1],counts.shape[1]))
@@ -140,13 +140,17 @@ class stripped_regression:
         correlation_derived_weights[correlation_derived_weights > 1000] = 1000
 
         if masked:
-            if mask == None:
+            if str(mask) == "None":
                 mask = cell == 0
 
             correlation_derived_weights[mask] = np.zeros(correlation_derived_weights.shape[1])
 
-
         correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
+
+        partial_corr_weights = np.power(1-np.abs(self.partial), -1)
+        partial_corr_weights[partial_corr_weights > 1000] = 1000
+
+        partial_adjusted = np.average(raw_predicted, axis = 0, weights = partial_corr_weights)
 
         # print "Computed correlation adjusted values, computing dropouts:"
 
@@ -163,16 +167,18 @@ class stripped_regression:
         dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
 
 
-        if truth != None and verbose:
+        if str(truth) != "None" and verbose:
             print "Truth To Mean"
             print pearsonr(truth,self.means)
             print "Guess"
             print "======="
 
-            # print "Unadjusted"
-            # print pearsonr(unadjusted,truth)
+            print "Unadjusted"
+            print pearsonr(unadjusted,truth)
             print "Correlation Adjusted"
             print pearsonr(correlation_adjusted,truth)
+            print "Partial Correlation Adjusted"
+            print pearsonr(partial_adjusted, truth)
 
             print "======"
             print "Centered Data"
