@@ -207,7 +207,7 @@ class stripped_regression:
 
 
 
-    def multi_prediction(self, counts, masked=True, override = False, process_limit = False):
+    def multi_prediction(self, counts, masked=True, override = False, process_limit = False, filename = ""):
 
         print "Starting Parallel Prediction"
 
@@ -219,17 +219,21 @@ class stripped_regression:
 
         result = pool.map(compact_prediction, zip([self]*counts.shape[0],counts,range(counts.shape[0])))
 
-        predicted_array = np.asarray(result.get())
+        predicted_array = np.asarray(result)
 
         print "Computed predicted array, shape:"
         print predicted_array.shape
 
         if override:
+            if len(filename) > 0:
+                np.save(prefix+filename,predicted_array)
             return predicted_array
         else:
             combined = np.copy(counts)
             combined[combined == 0] = predicted_array[combined == 0]
             print "Returning combined array of shape:"
+            if len(filename) > 0:
+                np.save(prefix+filename,predicted_array)
             print combined.shape
             return combined
 
