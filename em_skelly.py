@@ -9,7 +9,7 @@
 import numpy as np
 import sys
 
-import stripped_regression
+import manual_stripped_regression
 
 from sklearn.decomposition import PCA
 import scipy.spatial.distance as spt
@@ -31,7 +31,7 @@ def main():
 
     print counts.shape
 
-    linear_model = stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix)
+    linear_model = manual_stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix)
 
     print "Model built"
 
@@ -47,7 +47,9 @@ def main():
 
     for i, cell in enumerate(counts):
 
-        masked_imputed[i] = linear_model.predict_cell(cell, verbose = False, masked = True)[0]
+        masked_imputed[i] = linear_model.predict_cell(cell, verbose = True, masked = True)[0]
+
+        print masked_imputed[i,:10]
 
         if i%100 == 0:
             print i

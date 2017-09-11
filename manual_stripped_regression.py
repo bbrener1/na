@@ -55,7 +55,7 @@ class stripped_regression:
 
             print pick
 
-            self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:])
+            self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:], masked=True)
 
 
     def parallel_regression(self, counts = None):
@@ -136,7 +136,7 @@ class stripped_regression:
 
         unadjusted = np.mean(raw_predicted, axis = 0)
 
-        correlation_derived_weights = np.power(1-np.abs(self.correlations), -10)
+        correlation_derived_weights = np.power(1-np.abs(self.correlations), -1)
         correlation_derived_weights[correlation_derived_weights > 10000] = 10000
 
         if masked:
@@ -147,10 +147,10 @@ class stripped_regression:
 
         correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
 
-        partial_corr_weights = np.power(1-np.abs(self.partial), -1)
-        partial_corr_weights[partial_corr_weights > 1000] = 1000
+        slope_correlation_weights = np.power(1-np.sqrt(np.abs(np.multiply(self.correlations,self.slopes))),-1)
+        slope_correlation_weights[slope_correlation_weights > 10000] = 10000
 
-        partial_adjusted = np.average(raw_predicted, axis = 0, weights = partial_corr_weights)
+        slope_corr_adjusted = np.average(raw_predicted, axis=0, weights = slope_correlation_weights)
 
         # print "Computed correlation adjusted values, computing dropouts:"
 
@@ -175,21 +175,22 @@ class stripped_regression:
 
             print "Unadjusted"
             print pearsonr(unadjusted,truth)
-            print "Correlation Adjusted"
+            print "Correlation Adjusted:"
             print pearsonr(correlation_adjusted,truth)
-            print "Partial Correlation Adjusted"
-            print pearsonr(partial_adjusted, truth)
-
+            print "Slope/Correlation Adjusted:"
+            print pearsonr(slope_corr_adjusted, truth)
             print "======"
             print "Centered Data"
             print pearsonr(unadjusted-self.means,truth-self.means)
             print pearsonr(correlation_adjusted-self.means,truth-self.means)
+            print pearsonr(slope_corr_adjusted-self.means,truth-self.means)
             print "======"
             print "True sum"
             print np.sum(np.abs(truth-self.means))
             print "Prediction sum"
             print np.sum(np.abs(unadjusted-self.means))
             print np.sum(np.abs(correlation_adjusted-self.means))
+            print np.sum(np.abs(slope_corr_adjusted-self.means))
 
             print "\n\n"
 
