@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import multiprocessing as mlt
+from multiprocessing.managers import BaseManager, BaseProxy
 
 import sys
 
@@ -20,16 +21,18 @@ import matplotlib.pyplot as plt
 import check_hash as chk
 from matrix_assurance import matrix_assurance
 
+    # Wrapper function for prediction for the purposes of multiprocessing:
+
+def compact_prediction(l):
+    result = l[0].predict_cell(l[1], verbose=False, masked=True)[1]
+    if l[2]%100==0:
+        print l[2]
+    return result
+
 def compact_regression(l):
     result = (linregress(l[0],l[1]),l[2],l[3])
     return result
 
-
-def compact_prediction(l):
-    result = predict_cell(l[0], verbose=False, masked=True)[0]
-    if l[1]%100==0:
-        print l[1]
-    return result
 
 class stripped_regression:
 
@@ -202,6 +205,8 @@ class stripped_regression:
 
         return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
 
+
+
     def multi_prediction(self, counts, masked=True, override = False, process_limit = False):
 
         print "Starting Parallel Prediction"
@@ -211,7 +216,8 @@ class stripped_regression:
         else:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
 
-        result = pool.map(compact_prediction, zip(counts,range(counts.shape[0])))
+
+        result = pool.map(compact_prediction, zip([self]*counts.shape[0],counts,range(counts.shape[0])))
 
         predicted_array = np.asarray(result.get())
 
