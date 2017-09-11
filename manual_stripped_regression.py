@@ -94,7 +94,7 @@ class stripped_regression:
             intercepts[c[1],c[2]] = c[0][1]
             correlations[c[1],c[2]] = c[0][2]
             pval[c[1],c[2]] = c[0][3]
-            if i%1000000==0:
+            if i%10000==0:
                 print i
 
         slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
