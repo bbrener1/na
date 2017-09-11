@@ -136,7 +136,7 @@ class stripped_regression:
 
         unadjusted = np.mean(raw_predicted, axis = 0)
 
-        correlation_derived_weights = np.power(1-np.abs(self.correlations), -2)
+        correlation_derived_weights = np.power(1-np.abs(self.correlations), -10)
         correlation_derived_weights[correlation_derived_weights > 1000] = 1000
 
         if masked:
