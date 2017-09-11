@@ -35,7 +35,7 @@ def main():
 
     print "Model built"
 
-    linear_model.test()
+    # linear_model.test()
 
     print "Testing initial self-predictive power."
 

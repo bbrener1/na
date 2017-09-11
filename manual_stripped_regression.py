@@ -202,12 +202,12 @@ class stripped_regression:
 
         return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
 
-    def multi_prediction(self, counts, masked=True, override = False, process_limit = self.process_limit):
+    def multi_prediction(self, counts, masked=True, override = False, process_limit = False):
 
         print "Starting Parallel Prediction"
 
         if process_limit:
-            pool = mlt.Pool(min(processes=mlt.cpu_count()-2,20))
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
         else:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
 
