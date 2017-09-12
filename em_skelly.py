@@ -56,6 +56,7 @@ def main():
 
     print "Masked prediction self-correlation:"
     print pearsonr(counts[counts > 0], masked_imputed[counts > 0])
+    print pearsonr(counts.ravel(),masked_imputed.ravel())
 
     print "Count correlation to means:"
     print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
