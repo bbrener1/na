@@ -110,7 +110,7 @@ def main():
     # print "Prediction of non-zero values through deviation means:"
     # print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
     print "Predictions of all values through deviation means:"
-    print pearsonr(counts[dropout_mask], deviation_medians)
+    print pearsonr(counts[:,dropout_mask], deviation_medians)
 
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
