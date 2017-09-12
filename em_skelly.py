@@ -62,7 +62,7 @@ def main():
 
     print "Naive prediction:"
 
-    naive_imputed = linear_model.multi_prediction(counts, override=True, masked=False)
+    naive_imputed = linear_model.multi_prediction(counts, override=True, masked=False, filename="naive_lin_reg")
 
     # naive_imputed = np.zeros(counts.shape)
     #
