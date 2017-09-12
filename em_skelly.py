@@ -114,7 +114,7 @@ def main():
 
     print "Deviation medians on imputed value matrix:"
 
-    imp_dev_tuple = cfd.folded_deviation_matrix(first_naive, pretag=prefix)
+    imp_dev_tuple = cfd.folded_deviation_matrix(first_naive, pretag=prefix, filename="imputed_deviation")
 
     imp_dev_dropout = imp_dev_tuple[1]
 
