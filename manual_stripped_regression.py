@@ -213,7 +213,7 @@ class stripped_regression:
 
         if len(filename) > 0:
             if chk.check_hash(counts, filename, prefix=self.prefix):
-                return np.load(self.prefix+filename)
+                return np.load(self.prefix+filename+".npy")
 
         if process_limit:
             pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
