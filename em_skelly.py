@@ -81,7 +81,7 @@ def main():
 
     print "Sequential naive prediction, no initial override:"
 
-    first_naive = linear_model.multi_prediction(counts)
+    first_naive = linear_model.multi_prediction(counts,filename='seq_step_1')
 
     second_naive = linear_model.multi_prediction(first_naive, override = True, filename="sequential_imputed_lin_reg")
 
@@ -107,10 +107,21 @@ def main():
 
     deviation_medians = np.median(deviation_tuple[3], axis=2)
 
-    # print "Prediction of non-zero values through deviation means:"
-    # print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
+    print "Prediction of non-zero values through deviation means:"
+    print pearsonr(counts[:,dropout_mask].ravel()[(counts[:,dropout_mask] > 0).ravel()],deviation_medians.ravel()[(counts[:,dropout_mask] > 0).ravel()])
     print "Predictions of all values through deviation means:"
     print pearsonr(counts[:,dropout_mask].ravel(), deviation_medians.ravel())
+
+    print "Deviation medians on imputed value matrix:"
+
+    imp_dev_tuple = cfd.folded_deviation_matrix(first_naive, pretag=prefix)
+
+    imp_dev_dropout = imp_dev_tuple[1]
+
+    imp_dev_medians = np.median(imp_dev_tuple[3], axis=2)
+
+    print "Predictions of all values through imputed deviation means:"
+    print pearsonr(counts[:,dropout_mask].ravel(), imp_dev_medians.ravel())
 
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
