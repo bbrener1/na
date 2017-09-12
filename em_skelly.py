@@ -101,10 +101,10 @@ def main():
 
     print "Computing deviation means:"
 
-    deviation_medians = np.median(cfd.folded_deviation_matrix(counts)[3], axis=2)
+    deviation_medians = np.median(cfd.folded_deviation_matrix(counts, pretag=prefix)[3], axis=2)
 
-    print "Prediction of non-zero values through deviation means:"
-    print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
+    # print "Prediction of non-zero values through deviation means:"
+    # print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
     print "Predictions of all values through deviation means:"
     print pearsonr(counts, deviation_medians)
 
