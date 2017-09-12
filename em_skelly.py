@@ -121,7 +121,7 @@ def main():
     imp_dev_medians = np.median(imp_dev_tuple[3], axis=2)
 
     print "Predictions of all values through imputed deviation means:"
-    print pearsonr(counts[:,dropout_mask].ravel(), imp_dev_medians.ravel())
+    print pearsonr(counts[:,imp_dev_dropout].ravel(), imp_dev_medians.ravel())
 
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
