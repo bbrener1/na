@@ -101,12 +101,16 @@ def main():
 
     print "Computing deviation means:"
 
-    deviation_medians = np.median(cfd.folded_deviation_matrix(counts, pretag=prefix)[3], axis=2)
+    deviation_tuple = cfd.folded_deviation_matrix(counts, pretag=prefix)
+
+    dropout_mask = deviation_tuple[1]
+
+    deviation_medians = np.median(deviation_tuple[3], axis=2)
 
     # print "Prediction of non-zero values through deviation means:"
     # print pearsonr(counts[counts > 0],deviation_medians[counts > 0])
     print "Predictions of all values through deviation means:"
-    print pearsonr(counts, deviation_medians)
+    print pearsonr(counts[dropout_mask], deviation_medians)
 
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
