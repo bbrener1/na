@@ -54,12 +54,15 @@ def main():
     #     if i%100 == 0:
     #         print i
 
-    print "Masked prediction self-correlation:"
+    print "Masked prediction self-correlation (non-zero only):"
     print pearsonr(counts[counts > 0], masked_imputed[counts > 0])
+    print "Total:"
     print pearsonr(counts.ravel(),masked_imputed.ravel())
 
-    print "Count correlation to means:"
+    print "Count correlation to means (non-zero only):"
     print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
+    print "Total:"
+    print pearsonr(counts.ravel(), mean_matrix.ravel())
 
     print "Naive prediction:"
 
