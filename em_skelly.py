@@ -83,7 +83,7 @@ def main():
 
     first_naive = linear_model.multi_prediction(counts)
 
-    second_naive = linear_model.multi_prediction(first_naive, override = True)
+    second_naive = linear_model.multi_prediction(first_naive, override = True, filename="sequential_imputed_lin_reg")
 
     # second_naive = np.zeros(counts.shape)
     #
