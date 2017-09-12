@@ -43,7 +43,7 @@ def main():
 
     print "Masked prediction:"
 
-    masked_imputed = linear_model.multi_prediction(counts, override=True)
+    masked_imputed = linear_model.multi_prediction(counts, override=True, filename = "imputed_lin_reg")
 
     # for i, cell in enumerate(counts):
     #

@@ -24,7 +24,7 @@ from matrix_assurance import matrix_assurance
     # Wrapper function for prediction for the purposes of multiprocessing:
 
 def compact_prediction(l):
-    result = l[0].predict_cell(l[1], verbose=False, masked=True)[1]
+    result = l[0].predict_cell(l[1], verbose=False, masked=True)[0]
     if l[2]%100==0:
         print l[2]
     return result
@@ -211,6 +211,10 @@ class stripped_regression:
 
         print "Starting Parallel Prediction"
 
+        if len(filename) > 0:
+            if chk.check_hash(counts, filename, prefix=self.prefix):
+                return np.load(prefix+filename)
+
         if process_limit:
             pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
         else:
@@ -227,13 +231,15 @@ class stripped_regression:
         if override:
             if len(filename) > 0:
                 np.save(prefix+filename,predicted_array)
+                chk.write_hash(counts,filename, prefix = self.prefix)
             return predicted_array
         else:
             combined = np.copy(counts)
             combined[combined == 0] = predicted_array[combined == 0]
             print "Returning combined array of shape:"
             if len(filename) > 0:
-                np.save(prefix+filename,predicted_array)
+                np.save(filename,predicted_array)
+                chk.write_hash(counts, filename, prefix = self.prefix)
             print combined.shape
             return combined
 
