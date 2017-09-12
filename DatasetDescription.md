@@ -22,4 +22,4 @@ In its raw form the dataset is a 1656x4773 matrix of numeric values, each row re
 
 First let's take a very top-level look, how transcripts are we seeing per cell, at least roughly?
 
-!(https://github.com/bbrener1/na/blob/master/figures/transcript_totals_hist.png)
+!(https://github.com/bbrener1/na/blob/master/figures/transcript_totals_hist.png Transcript Total Histogram)
