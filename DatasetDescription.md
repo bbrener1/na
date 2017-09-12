@@ -40,6 +40,8 @@ Another interesting way to visualize this type of data is to try to use both of 
 
 In a sense, do we generally see higher expression values for genes in general when size of the recovered transcriptome for the cell is larger? Or no? A way to examine this question is to look at a plot of gene expression level plotted against the size of the transcriptome for the cell the gene came from. Here we get something like this:
 
+![](https://github.com/bbrener1/na/blob/master/figures/trans_size_vs_exp.png "A Weird Graph")
+
 ## Ok so how do we usefully talk about 4k genes at once? 
 
 Well, we have a broad description of the the dataset, at least we are getting a feel for some of the numbers. 
