@@ -16,7 +16,10 @@ https://doi.org/10.1186/s13059-016-0947-7
 
 ## What's In This Dataset?
 
-In its raw form the dataset is a 1656x4773 matrix of numeric values, each row representing cells and each column representing the differential expression of a gene in Log2 space. Additionally, the matrix contains fluorescence values for various FACS readouts, mostly antibodies against membrane proteins, but also including DAPI. Finally the first 3 columns are a set of 3 coordinates mapping each cell to a location in a 3D diffusion map. 
+In its raw form the dataset is a 1656x4773 matrix of numeric values, each row representing cells and each column representing the (Normalized, I think?) gene counts in Log2 space. Additionally, the matrix contains fluorescence values for various FACS readouts, mostly antibodies against membrane proteins, but also including DAPI. Finally the first 3 columns are a set of 3 coordinates mapping each cell to a location in a 3D diffusion map. 
 
 ## How do the values look?
 
+First let's take a very top-level look, how transcripts are we seeing per cell, at least roughly?
+
+!(https://github.com/bbrener1/na/blob/master/figures/transcript_totals_hist.png)
