@@ -95,7 +95,7 @@ def main():
     #         print i
 
     print "Sequential naive prediction self-correlation:"
-    print pearsonr(counts, second_naive)
+    print pearsonr(counts.ravel(), second_naive.ravel())
     print "Sequential naive prediction (non-zero only):"
     print pearsonr(counts[counts > 0], second_naive[counts > 0])
 
