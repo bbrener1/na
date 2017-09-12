@@ -230,7 +230,7 @@ class stripped_regression:
 
         if override:
             if len(filename) > 0:
-                np.save(prefix+filename,predicted_array)
+                np.save(self.prefix+filename,predicted_array)
                 chk.write_hash(counts,filename, prefix = self.prefix)
             return predicted_array
         else:
@@ -238,7 +238,7 @@ class stripped_regression:
             combined[combined == 0] = predicted_array[combined == 0]
             print "Returning combined array of shape:"
             if len(filename) > 0:
-                np.save(filename,predicted_array)
+                np.save(self.prefix+filename,predicted_array)
                 chk.write_hash(counts, filename, prefix = self.prefix)
             print combined.shape
             return combined
