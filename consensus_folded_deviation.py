@@ -89,7 +89,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     distance_matrix = spt.squareform(spt.pdist(reduced_counts))
 
     output.write("Distance matrix content, shape\n")
-    output.write(str(distance_matrix[:10,:10]) + "\n")
+    output.write(str(distance_matrix[:5,:5]) + "\n")
     output.write(str(distance_matrix.shape) + "\n")
 
     folds = list(itertools.combinations(range(fold),int(fold/2)+1))
@@ -160,7 +160,7 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
     plt.savefig(pretag + "coef_var_fold.png")
 
     output.write("Neighbor mean matrix content:\n")
-    output.write(str(neighbor_mean_matrix[:10,:10]) + "\n")
+    output.write(str(neighbor_mean_matrix[:5,:5]) + "\n")
 
 
     output.write("Minimum in deviation matrix:\n")
