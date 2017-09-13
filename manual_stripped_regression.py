@@ -217,12 +217,15 @@ class stripped_regression:
                 if override:
                     return np.load(self.prefix+filename+".npy")
                 else:
+                    if chk.check_hash(counts, filename +"_combined", prefix=self.prefix):
 
-                    combined = np.copy(counts)
-                    combined[combined == 0] = np.load(self.prefix + filename + ".npy")[combined == 0]
-                    print "Returning combined array, dimensions:"
-                    print combined.shape
-                    return combined
+                        combined = np.copy(counts)
+                        combined[combined == 0] = np.load(self.prefix + filename + "_combined.npy")[combined == 0]
+                        print "Returning combined array, dimensions:"
+                        print combined.shape
+                        return combined
+                    else:
+                        pass
 
         if process_limit:
             pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
@@ -246,6 +249,10 @@ class stripped_regression:
         else:
             combined = np.copy(counts)
             combined[combined == 0] = predicted_array[combined == 0]
+
+            if len(filename) > 0:
+                    np.save(self.prefix+filename+"_combined",combined)
+                    chk.write_hash(counts, filename+"_combined", prefix = self.prefix)
 
             print "Returning combined array of shape:"
             print combined.shape
