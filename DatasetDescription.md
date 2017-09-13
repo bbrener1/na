@@ -48,6 +48,8 @@ I'm not entirely sure what to make of this data yet, but it's not obviously a di
 
 Well, we have a broad description of the the dataset, at least we are getting a feel for some of the numbers. 
 
-First things first, let's take a look at what's being highly expressed and see if any of it is surprising or generally what we'd hope to see. 
+First things first, let's try to get a feel for what the distributions of expression values for these genes could look like. There are a few ways of doing this. Step 1 might to just grab 20 histograms at random. Let's try that. 
 
+https://github.com/bbrener1/na/blob/master/figures/gene_histogram_gigaplex.png
 
+Pardon the janky formatting, lower axies are gene expression values, y axies are frequencies in log space. We're not super interested in the particular details anyway, so don't look too hard. The thing to notice is that generally speaking gene expression looks bimodal. Let's hang on to this idea and we'll examine it and its implications later. 
