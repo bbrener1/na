@@ -244,7 +244,7 @@ class stripped_regression:
             print combined.shape
 
             print "Check combined array, match counts?"
-            print np.sum(combined[counts > 0] == counts[counts > 0]
+            print np.sum(combined[counts > 0] == counts[counts > 0])
             print np.sum(counts > 0)
 
             return combined
