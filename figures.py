@@ -3,6 +3,7 @@
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+import scipy.special
 
 import numpy as np
 
@@ -22,17 +23,17 @@ plt.xlabel("Number of total transcripts in a cell")
 plt.ylabel("Frequency (log10)")
 
 plt.figure("trans_size_vs_exp")
-plt.scatter(counts.ravel(),np.repeat(np.sum(np.exp2(counts),axis=1),counts.shape[1]),s=2*(np.logit(counts.ravel())-.5),alpha=.01)
+plt.scatter(counts.ravel(),np.repeat(np.sum(np.exp2(counts),axis=1),counts.shape[1]),s=.01,alpha=.3)
 plt.title("Expression of each gene vs size of cell transcriptome")
 plt.xlabel("Log2 gene expression value")
 plt.ylabel("Total per-cell transcriptome counts (log10 scale)")
 plt.yscale('log')
-plt.savefig('figures/trans_size_vs_exp.png', dpi=300)
+plt.savefig('figures/trans_size_vs_exp.png')
 
 plt.figure("trans_size_vs_exp_alpha")
-plt.scatter(counts.ravel(),np.repeat(np.sum(np.exp2(counts),axis=1),counts.shape[1]),s=.1,alpha=2*(np.logit(counts.ravel())-.5))
+plt.scatter(counts.ravel(),np.repeat(np.sum(np.exp2(counts),axis=1),counts.shape[1]),s=2.0*(np.random.logistic(counts.ravel())-.5),alpha=.3)
 plt.title("Expression of each gene vs size of cell transcriptome")
 plt.xlabel("Log2 gene expression value")
 plt.ylabel("Total per-cell transcriptome counts (log10 scale)")
 plt.yscale('log')
-plt.savefig('figures/trans_size_vs_exp.png', dpi=300)
+plt.savefig('figures/trans_size_vs_exp_alpha.png')

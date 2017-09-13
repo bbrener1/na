@@ -18,7 +18,7 @@ from matplotlib import pyplot as plt
 from matrix_assurance import *
 
 
-def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5, verbose = True):
+def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, pretag="", presolve=None, output = None, filename = "deviation_matrix", fold = 5, verbose = True, average = 'median'):
 
     if output == None:
         output = sys.stdout
@@ -120,7 +120,15 @@ def folded_deviation_matrix(counts, gold_network = None, neighbor_setting = 50, 
             # print std_dev_matrix.shape
             # print np.mean(neighborhood[fold_mask],axis=0)
 
-            neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+            if average == 'mean':
+                neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+            if average == 'median':
+                neighbor_mean_matrix[i,:,j] = np.mean(neighborhood[fold_mask],axis=0)
+            if callable(average):
+                neighbor_mean_matrix[i,:,j] = average(neighborhood[fold_mask])
+
+            if average != 'mean' and average != 'median' and not callable(average):
+                raise AttributeError('Not a valid averaging method, must be mean, median, or a function that processes 3d numpy arrays along axis 0')
 
             std_dev_matrix[i,:,j] = np.std(neighborhood[fold_mask],axis=0)
 
