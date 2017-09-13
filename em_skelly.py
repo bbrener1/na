@@ -85,7 +85,7 @@ def main():
 
     print "Sequential naive prediction, no initial override:"
 
-    first_naive = linear_model.multi_prediction(counts,filename='seq_step_1')
+    first_naive = linear_model.multi_prediction(counts,filename='seq_step_1', override = False)
 
     second_naive = linear_model.multi_prediction(first_naive, override = True, filename="sequential_imputed_lin_reg")
 

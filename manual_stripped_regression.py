@@ -148,6 +148,7 @@ class stripped_regression:
         correlation_derived_weights = np.power(1-np.abs(self.correlations), -1)
         correlation_derived_weights[correlation_derived_weights > 10000] = 10000
 
+
         if masked:
             if str(mask) == "None":
                 mask = cell == 0
@@ -236,11 +237,16 @@ class stripped_regression:
         else:
             combined = np.copy(counts)
             combined[combined == 0] = predicted_array[combined == 0]
-            print "Returning combined array of shape:"
             if len(filename) > 0:
                 np.save(self.prefix+filename,predicted_array)
                 chk.write_hash(counts, filename, prefix = self.prefix)
+            print "Returning combined array of shape:"
             print combined.shape
+
+            print "Check combined array, match counts?":
+            print np.sum(combined[counts > 0] == counts[counts > 0]
+            print np.sum(counts > 0)
+
             return combined
 
 
