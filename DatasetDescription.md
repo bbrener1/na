@@ -35,3 +35,13 @@ What does this look like in terms of individual gene expression?
 This is a histogram of all values present in the matrix, so you are looking at the frequency of seeing individual genes expressed at various log2 expression values. Nothing especially mind-blowing, median gene expression is approx 250 copies, presumably mostly encountered in 400k transcript cells. Perhaps about half of the values observed are below 250 copies, with many genes detected at the quite low/unreliable level of 1-2 copies. Observe the large number of raw 0 values. Of course in a log matrix a value of 0 means 1 copy, but we can probably safely round most of these values down to an actual 0. It's a common issue with single-cell RNA seq to encounter many genes that are spuriously marked as possessing 0 expression. We'll think about how to deal with this issue later though.
 
 No pretty picture available, but roughly 40% of the cells in the matrix are zeroes. 
+
+Another interesting way to visualize this type of data is to try to use both of these pieces of information simultaneously.
+
+In a sense, do we generally see higher expression values for genes in general when size of the recovered transcriptome for the cell is larger? Or no? A way to examine this question is to look at a plot of gene expression level plotted against the size of the transcriptome for the cell the gene came from. Here we get something like this:
+
+![](https://github.com/bbrener1/na/blob/master/figures/trans_size_vs_exp.png "A Weird Graph")
+
+## Ok so how do we usefully talk about 4k genes at once? 
+
+Well, we have a broad description of the the dataset, at least we are getting a feel for some of the numbers. 
