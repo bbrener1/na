@@ -42,6 +42,12 @@ In a sense, do we generally see higher expression values for genes in general wh
 
 ![](https://github.com/bbrener1/na/blob/master/figures/trans_size_vs_exp.png "A Weird Graph")
 
+I'm not entirely sure what to make of this data yet, but it's not obviously a diagonal so that's mixed news. Generally it looks like getting a larger transcriptome is a consequence either of only very few very high expression genes (wouldn't be apparent on this plot since I made most dots mostly transparent) or capturing more rare genes at higher levels. I'll think about this problem and come back to it later.
+
 ## Ok so how do we usefully talk about 4k genes at once? 
 
 Well, we have a broad description of the the dataset, at least we are getting a feel for some of the numbers. 
+
+First things first, let's take a look at what's being highly expressed and see if any of it is surprising or generally what we'd hope to see. 
+
+
