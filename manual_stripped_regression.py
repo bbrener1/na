@@ -48,10 +48,11 @@ def compact_ts_est(l):
 class stripped_regression:
 
 
-    def __init__(self, counts, solved=False, prefix="", method='ols'):
+    def __init__(self, counts, solved=False, prefix="", method='ols',process_limit = False):
 
         self.counts = matrix_assurance(counts)
         self.prefix = prefix
+        self.process_limit = process_limit
 
         print "Main successful"
 
@@ -62,7 +63,7 @@ class stripped_regression:
             self.correlations = np.load(prefix + "correlations_lin_reg.npy")
             self.pval = np.load(prefix + "pval_lin_reg.npy")
         else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method)
+            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method, process_limit=process_limit)
 
         self.imputed_counts = None
 
@@ -78,7 +79,7 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:], masked=True)
 
 
-    def parallel_regression(self, counts = None, method = 'ols'):
+    def parallel_regression(self, counts = None, method = 'ols', process_limit = False):
 
         if str(counts) == "None":
             counts = self.counts
@@ -93,7 +94,10 @@ class stripped_regression:
 
         pval = np.zeros((counts.shape[1],counts.shape[1]))
 
-        pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
+        if process_limit:
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
+        else:
+            pool = mlt.Pool(processes=mlt.cpu_count()-2)
         # pool = mlt.Pool(processes=10)
 
         print "Parallel Regression Started"
