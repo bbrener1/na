@@ -99,14 +99,14 @@ print len(gene_dendrogram['leaves'])
 ax3 = fig.add_axes([.3,.1,.55,.6])
 
 sorted_singly = counts[np.flip(cell_dendrogram['leaves'],0)]
-sorted_doubly = sorted_singly.T[gene_dendrogram['leaves']]
-sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
-sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
+sorted_doubly = sorted_singly.T[gene_dendrogram['leaves']].T
+# sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
+# sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
 im = ax3.imshow(sorted_doubly, cmap='hot', aspect='auto')
 # plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
 # plt.xlabel("Genes")
 # plt.ylabel("Cells")
 ax4 = fig.add_axes([.85,.1,.05,.6])
-ax4.set_ylim(bottom=-10,top=10)
+# ax4.set_ylim(bottom=-10,top=10)
 fig.colorbar(mappable=im, fraction=.99, ax=ax4)
 plt.savefig("figures/doubly_clustered_raw_genes.png", dpi=800)
