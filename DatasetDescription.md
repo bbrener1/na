@@ -59,9 +59,25 @@ Let's hang on to this idea and we'll examine it and its implications later.
 
 TODO: Cluster uniform histograms also, see what happens
 
+## Heatmaps for fun and profit
+
 Ok, so we've looked at 20 histograms of gene expression. Perhaps we were unlucky and got a weird selection? What are some other meaningful ways of looking at boatloads of organized data to try to find if there are similar ways in which it can behave? This sounds like a job for heatmaps and clustering!
 
 If we simply wanted to look at the totality of the matrix without having to squint really hard at tiny numbers, a simple way to do so would be to color-code each value in a logical way, shrink it all down and look at the overall color pattern. Even by itself this can be informative to some degree. Below is a heat map, each row of pixels is a single cell, and each column is a single gene, so pixel[x,y] is the color of cell x expression of gene y (in whatever order they appear in the header of our file).
 
 ![](https://github.com/bbrener1/na/blob/master/figures/raw_expression_heatmap.png "An unorganzied heatmap of gene expression")
+
+Ok, so far we sort of see some of the things we already expected recaptured, some genes have highish overall expression across all cells, some genes have barely any expression anywhere. This is the vertical lines. No obvious horizontal lines yet, but variability across cells isn't as great as between genes. At the moment though, the ordering along both axes is pretty much random.
+
+Can we put these axies in a useful or interesting order? If we are assuming that there should be patterns to the gene expression that recurr among different cells, a typical approach to finding that pattern would be something like heirarchal clustering, which fortunately SciPy can do for us. 
+
+![](https://github.com/bbrener1/na/blob/master/figures/doubly_clustered_raw_genes.png "Heirarchically clustering genes and cells")
+
+Now let's take a look at what we got from heirarchal clustering. First off we should note that the dendrograms look a little weird. Heirarchal clustering is heavily dependent on the distance metrics and centering procedures for its final output. Now unfortunately, the most conventional distance metric, namely eucledian distance, was giving me trouble because it was reaching into too much recursive depth and breaking Scipy. But that would imply to us that it was doing something weird and dumb anyway, so for the moment let's leave that aside. Empirically, the most interesting results come around when use we  the "average" cluster center method, cosine distances for cells, and correlation distances for genes. That's the heatmap you see. 
+
+These types of heatmaps are also fairly conventional. The squares you see are blocks of genes that are up or down regulated in specific cell types, ie a horizontal band is a cell type, and vertical bands are the specific patterns of expression of gene blocks in those cell types. Now notice something more interesting. If you remember our earlier histograms, we saw that gene expression across the whole cell population was a bimodal distribution, but it looked normalish at those two peaks. But note that in this diagram, we don't necessarily see that much "noise". There is a little speckling for highly expressed genes, but the TV-static pattern of the unordered heatmap is gone. 
+
+On the one hand, we shouldn't be surprised that clustering brings together similar cells, we're still doing well and our data makes sense.
+
+On the other hand, it suggests to us a slightly less obvious point. When we see a random-looking distribution in gene expression values relative to some factor (such as gene vs gene scatter plot), we might be tempted to think of the fact that distribution looks like a bell curve or something similar as being the result of technical noise or "just biology being biology". On the other hand, looking at how well ordered this heatmap looks, perhaps the degree of randomness in the average genetic expression bell curve is smaller than it appears?
 
