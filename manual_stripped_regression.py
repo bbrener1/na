@@ -103,7 +103,7 @@ class stripped_regression:
 
             returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
-        if method != "ols" or method != "theil_sen":
+        if method != "ols" and method != "theil_sen":
             raise AttributeError("Not a legal estimator selection, use 'ols' or 'theil_sen'")
 
         for i,c in enumerate(returns):
