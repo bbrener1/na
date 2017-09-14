@@ -25,7 +25,7 @@ def main():
 
     # counts = np.load(prefix+"/counts.npy")
 
-    counts = np.load(prefix + "/counts.npy")
+    counts = np.load(prefix + "counts.npy")
 
     print "Counts loaded:"
 
