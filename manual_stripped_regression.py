@@ -29,8 +29,11 @@ def compact_prediction(l):
         print l[2]
     return result
 
-def compact_regression(l):
-    result = (linregress(l[0],l[1]),l[2],l[3])
+def compact_regression(l, masked = True):
+    mask = np.ones(l[0].shape, dtype=bool)
+    if masked:
+        mask = np.logical_and(l[0] > 0,l[1] > 0)
+    result = (linregress(l[0][mask],l[1][mask]),l[2],l[3])
     return result
 
 
