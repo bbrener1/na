@@ -13,7 +13,7 @@ import itertools
 
 from scipy.stats import pearsonr
 from scipy.stats import linregress
-from scipy.stats.mastats import theilslopes
+from scipy.stats.mstats import theilslopes
 
 import matplotlib
 matplotlib.use('agg')
