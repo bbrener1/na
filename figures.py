@@ -87,18 +87,18 @@ with plt.rc_context({'lines.linewidth':0.1}):
 ax2 = fig.add_axes([.3,.71,.55,.2])
 # display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
 with plt.rc_context({'lines.linewidth':0.1}):
-    display_dendrogram = hrc.dendrogram(cell_linked, ax=ax2)
+    display_dendrogram = hrc.dendrogram(gene_linked, ax=ax2)
 # ax2.set_ylim(top=1,bottom=.75)
 # ax2.set_yscale('log')
 
-# print sorted_doubly.shape
-# print len(cell_dendrogram['leaves'])
-# print len(gene_dendrogram['leaves'])
+print counts.shape
+print len(cell_dendrogram['leaves'])
+print len(gene_dendrogram['leaves'])
 
 
 ax3 = fig.add_axes([.3,.1,.55,.6])
 
-sorted_singly = counts[cell_dendrogram['leaves']]
+sorted_singly = counts[np.flip(cell_dendrogram['leaves'],0)]
 sorted_doubly = sorted_singly.T[gene_dendrogram['leaves']]
 sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
 sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
