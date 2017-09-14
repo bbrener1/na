@@ -65,3 +65,10 @@ If we simply wanted to look at the totality of the matrix without having to squi
 
 ![](https://github.com/bbrener1/na/blob/master/figures/raw_expression_heatmap.png "An unorganzied heatmap of gene expression")
 
+Ok, so far we sort of see some of the things we already expected recaptured, some genes have highish overall expression across all cells, some genes have barely any expression anywhere. This is the vertical lines. No obvious horizontal lines yet, but variability across cells isn't as great as between genes. At the moment though, the ordering along both axes is pretty much random.
+
+Can we put these axies in a useful or interesting order? If we are assuming that there should be patterns to the gene expression that recurr among different cells, a typical approach to finding that pattern would be something like heirarchal clustering, which fortunately SciPy can do for us. 
+
+![](https://github.com/bbrener1/na/blob/master/figures/doubly_clustered_raw_genes.png "Heirarchically clustering genes and cells")
+
+Now let's take a look at what we got from heirarchal clustering. 
