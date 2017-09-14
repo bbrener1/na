@@ -31,7 +31,7 @@ def main():
 
     print counts.shape
 
-    linear_model = manual_stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix)
+    linear_model = manual_stripped_regression.stripped_regression(counts, solved = "solved" in sys.argv, prefix = prefix, method='thiel_sen')
 
     print "Model built"
 

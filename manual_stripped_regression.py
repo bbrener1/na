@@ -13,6 +13,7 @@ import itertools
 
 from scipy.stats import pearsonr
 from scipy.stats import linregress
+from scipy.stats.mastats import theilslopes
 
 import matplotlib
 matplotlib.use('agg')
@@ -36,11 +37,15 @@ def compact_regression(l, masked = True):
     result = (linregress(l[0][mask],l[1][mask]),l[2],l[3])
     return result
 
+def compact_ts_est(l):
+    result = (theilslopes(l[0],l[1]),l[2],l[3])
+    return result
+
 
 class stripped_regression:
 
 
-    def __init__(self, counts, solved=False, prefix=""):
+    def __init__(self, counts, solved=False, prefix="", method='ols'):
 
         self.counts = matrix_assurance(counts)
         self.prefix = prefix
@@ -54,7 +59,7 @@ class stripped_regression:
             self.correlations = np.load(prefix + "correlations_lin_reg.npy")
             self.pval = np.load(prefix + "pval_lin_reg.npy")
         else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts)
+            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method)
 
         self.imputed_counts = None
 
@@ -70,7 +75,7 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:], masked=True)
 
 
-    def parallel_regression(self, counts = None):
+    def parallel_regression(self, counts = None, method = 'ols'):
 
         if str(counts) == "None":
             counts = self.counts
@@ -90,7 +95,16 @@ class stripped_regression:
 
         print "Parallel Regression Started"
 
-        returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+        if method == 'ols':
+
+            returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+
+        if method == 'theil_sen':
+
+            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+
+        if method != "ols" or method != "theil_sen":
+            raise AttributeError("Not a legal estimator selection, use 'ols' or 'theil_sen'")
 
         for i,c in enumerate(returns):
             slopes[c[1],c[2]] = c[0][0]

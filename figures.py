@@ -7,6 +7,12 @@ import scipy.special
 
 import numpy as np
 
+from scipy.cluster import hierarchy as hrc
+from sklearn.decomposition import PCA
+
+from sklearn.cluster import AgglomerativeClustering
+
+
 counts = np.load('counts.npy')
 header = np.load('header_backup.npy')
 
@@ -38,14 +44,16 @@ header = np.load('header_backup.npy')
 # plt.ylabel("Total per-cell transcriptome counts (log10 scale)")
 # plt.yscale('log')
 # plt.savefig('figures/trans_size_vs_exp_alpha.png')
+#
+# plt.figure("gene_histogram_gigaplex")
+# plt.suptitle("Set of histograms of expression values for randomly chosen genes")
+# plt.xlabel("Log2 gene expression values")
+# plt.ylabel("Frequency")
+# for i, pick in enumerate(np.random.randint(counts.shape[1], size=20)):
+#     print pick
+#     plt.subplot(4,5,i+1)
+#     plt.title(header[pick],size=6)
+#     plt.hist(counts[:,pick], bins=21,log=True)
+# plt.savefig("figures/gene_histogram_gigaplex.png",dpi=300)
 
-plt.figure("gene_histogram_gigaplex")
-plt.suptitle("Set of histograms of expression values for randomly chosen genes")
-plt.xlabel("Log2 gene expression values")
-plt.ylabel("Frequency")
-for i, pick in enumerate(np.random.randint(counts.shape[1], size=20)):
-    print pick
-    plt.subplot(4,5,i+1)
-    plt.title(header[pick],size=6)
-    plt.hist(counts[:,pick], bins=21,log=True)
-plt.savefig("figures/gene_histogram_gigaplex.png",dpi=300)
+plt.figure("raw_expression_histogram")
