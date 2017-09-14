@@ -65,3 +65,48 @@ ax1.set_ylabel("Cells")
 ax1.set_title("Log2 expression values (Unordered)")
 cfig.colorbar(mappable=im,cax=ax2)
 plt.savefig('figures/raw_expression_heatmap', dpi=600)
+
+
+
+
+gene_linked = hrc.linkage(counts.T, method='average', metric='correlation')
+gene_dendrogram = hrc.dendrogram(gene_linked,no_plot=True)
+
+cell_linked = hrc.linkage(counts, method='average', metric='cosine')
+clusterization = hrc.fcluster(cell_linked, criterion='inconsistent',t=.5,)
+cell_dendrogram = hrc.dendrogram(cell_linked,no_plot=True)
+
+fig = plt.figure("doubly_clustered", figsize=(8,4))
+ax1 = fig.add_axes([.09,.1,.2,.6])
+# display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
+with plt.rc_context({'lines.linewidth':0.1}):
+    display_dendrogram = hrc.dendrogram(cell_linked,orientation='left',ax=ax1)
+# ax1.set_xlim(left=1.0,right=.75)
+# ax1.set_xscale('log')
+
+ax2 = fig.add_axes([.3,.71,.55,.2])
+# display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
+with plt.rc_context({'lines.linewidth':0.1}):
+    display_dendrogram = hrc.dendrogram(cell_linked, ax=ax2)
+# ax2.set_ylim(top=1,bottom=.75)
+# ax2.set_yscale('log')
+
+# print sorted_doubly.shape
+# print len(cell_dendrogram['leaves'])
+# print len(gene_dendrogram['leaves'])
+
+
+ax3 = fig.add_axes([.3,.1,.55,.6])
+
+sorted_singly = counts[cell_dendrogram['leaves']]
+sorted_doubly = sorted_singly.T[gene_dendrogram['leaves']]
+sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
+sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
+im = ax3.imshow(sorted_doubly, cmap='hot', aspect='auto')
+# plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
+# plt.xlabel("Genes")
+# plt.ylabel("Cells")
+ax4 = fig.add_axes([.85,.1,.05,.6])
+ax4.set_ylim(bottom=-10,top=10)
+fig.colorbar(mappable=im, fraction=.99, ax=ax4)
+plt.savefig("figures/doubly_clustered_raw_genes.png", dpi=800)
