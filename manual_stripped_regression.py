@@ -38,7 +38,10 @@ def compact_regression(l, masked = True):
     return result
 
 def compact_ts_est(l):
-    result = (theilslopes(l[0],l[1]),l[2],l[3])
+    try:
+        result = (theilslopes(l[0],l[1]),l[2],l[3])
+    except ValueError:
+        result = ((0,0,0,0),l[2],l[3])
     return result
 
 
@@ -101,6 +104,7 @@ class stripped_regression:
 
         if method == 'theil_sen':
 
+            counts
             returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
         if method != "ols" and method != "theil_sen":
