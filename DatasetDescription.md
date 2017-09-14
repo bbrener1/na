@@ -57,8 +57,11 @@ Pardon the janky formatting, lower axies are gene expression values, y axies are
 
 Let's hang on to this idea and we'll examine it and its implications later.
 
+TODO: Cluster uniform histograms also, see what happens
 
 Ok, so we've looked at 20 histograms of gene expression. Perhaps we were unlucky and got a weird selection? What are some other meaningful ways of looking at boatloads of organized data to try to find if there are similar ways in which it can behave? This sounds like a job for heatmaps and clustering!
 
-TODO: Cluster uniform histograms also, see what happens
+If we simply wanted to look at the totality of the matrix without having to squint really hard at tiny numbers, a simple way to do so would be to color-code each value in a logical way, shrink it all down and look at the overall color pattern. Even by itself this can be informative to some degree. Below is a heat map, each row of pixels is a single cell, and each column is a single gene, so pixel[x,y] is the color of cell x expression of gene y (in whatever order they appear in the header of our file).
+
+![](https://github.com/bbrener1/na/blob/master/figures/raw_expression_heatmap.png "An unorganzied heatmap of gene expression")
 
