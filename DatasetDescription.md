@@ -51,5 +51,14 @@ Well, we have a broad description of the the dataset, at least we are getting a 
 First things first, let's try to get a feel for what the distributions of expression values for these genes could look like. There are a few ways of doing this. Step 1 might to just grab 20 histograms at random. Let's try that. 
 
 ![](https://github.com/bbrener1/na/blob/master/figures/gene_histogram_gigaplex.png "Many gene expression histograms")
+(Note, this particular figure isn't deterministic to the code that generated it, but if you go back and generate histograms for the genes that do appear here, they should look identical)
 
-Pardon the janky formatting, lower axies are gene expression values, y axies are frequencies in log space. We're not super interested in the particular details anyway, so don't look too hard. The thing to notice is that generally speaking gene expression looks bimodal. Let's hang on to this idea and we'll examine it and its implications later. 
+Pardon the janky formatting, lower axies are gene expression values, y axies are frequencies in log space. We're not super interested in the particular details anyway, so don't look too hard. The thing to notice is that generally speaking gene expression looks bimodal. This isn't an entirely unexpected finding, there are actually many cell collections where it's the case that the average gene will be "high", "low" or "off" , but it's good to confirm and gives us a bit of a concept of what to expect.
+
+Let's hang on to this idea and we'll examine it and its implications later.
+
+
+Ok, so we've looked at 20 histograms of gene expression. Perhaps we were unlucky and got a weird selection? What are some other meaningful ways of looking at boatloads of organized data to try to find if there are similar ways in which it can behave? This sounds like a job for heatmaps and clustering!
+
+TODO: Cluster uniform histograms also, see what happens
+
