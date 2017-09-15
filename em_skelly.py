@@ -94,7 +94,7 @@ def main():
 
     # sequential_naive = linear_model.multi_prediction(counts, override = False, filename = "seq_imp_final_lin_reg")
 
-    final_naive = linear_model.multi_prediction(first_naive, override = True, filename="seq_imp_override_lin_reg")
+    final_naive = linear_model.multi_prediction(sequential_naive, override = True, filename="seq_imp_override_lin_reg")
 
     # second_naive = np.zeros(counts.shape)
     #
@@ -128,7 +128,7 @@ def main():
 
     print "Deviation medians on imputed value matrix:"
 
-    imp_dev_tuple = cfd.folded_deviation_matrix(first_naive, pretag=prefix, filename="imputed_deviation")
+    imp_dev_tuple = cfd.folded_deviation_matrix(sequential_naive, pretag=prefix, filename="imputed_deviation")
 
     imp_dev_dropout = imp_dev_tuple[1]
 
@@ -136,8 +136,9 @@ def main():
 
     print "Predictions of all values through imputed deviation means:"
     print pearsonr(counts[:,imp_dev_dropout].ravel(), imp_dev_medians.ravel())
-    print "Prediction of zeroes only:"
+    print "Prediction of non-zeroes only:"
     print pearsonr(counts[:,imp_dev_dropout][counts[:,imp_dev_dropout] > 0].ravel(), imp_dev_medians[counts[:,imp_dev_dropout] > 0].ravel())
+
 
     # dist_model = PCA(n_components=50)
     # dist_interm = dist_model.fit_transform(counts)
