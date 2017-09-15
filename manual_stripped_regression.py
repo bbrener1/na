@@ -103,6 +103,8 @@ class stripped_regression:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
         # pool = mlt.Pool(processes=10)
 
+        print "Processors detected:"
+        print pool._processes
         print "Parallel Regression Started"
 
         if method == 'ols':
@@ -119,7 +121,7 @@ class stripped_regression:
 
         if method == 'theil_sen':
 
-            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), [masking]*(counts.shape[1]**2), chunksize=100)
 
             for i,c in enumerate(returns):
                 slopes[c[1],c[2]] = c[0][0]
@@ -271,8 +273,10 @@ class stripped_regression:
         else:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
 
+        print "Processors detected:"
+        print pool._processes
 
-        result = pool.map(compact_prediction, zip([self]*counts.shape[0],counts,range(counts.shape[0])))
+        result = pool.map(compact_prediction, zip([self]*counts.shape[0],counts,range(counts.shape[0])),chunksize=100)
 
         predicted_array = np.asarray(result)
 
