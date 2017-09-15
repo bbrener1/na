@@ -35,7 +35,7 @@ def main():
 
     print "Model built"
 
-    # linear_model.test()
+    linear_model.test()
 
     print "Testing initial self-predictive power."
 
@@ -83,11 +83,18 @@ def main():
     print pearsonr(counts[counts > 0], mean_matrix[counts > 0])
 
 
-    print "Sequential naive prediction, no initial override:"
+    print "Sequential naive prediction, no override until final:"
 
-    first_naive = linear_model.multi_prediction(counts,filename='seq_step_1', override = False)
+    sequential_naive = linear_model.multi_prediction(counts, override = False, filename = "seq_imp_initial_lin_reg")
 
-    second_naive = linear_model.multi_prediction(first_naive, override = True, filename="sequential_imputed_lin_reg")
+    for i in range(5):
+        sequential_naive = linear_model.multi_prediction(sequential_naive, override = False)
+        if i%3==0:
+            middle_naive = linear_model.multi_prediction(sequential_naive,override = True, filename= "seq_imp_med_lin_reg")
+
+    # sequential_naive = linear_model.multi_prediction(counts, override = False, filename = "seq_imp_final_lin_reg")
+
+    final_naive = linear_model.multi_prediction(first_naive, override = True, filename="seq_imp_override_lin_reg")
 
     # second_naive = np.zeros(counts.shape)
     #
@@ -98,10 +105,13 @@ def main():
     #     if i%100 == 0:
     #         print i
 
+    print "Sequential naive, mid-value, self-correlation:"
+    print pearsonr(counts.ravel(), middle_naive.ravel())
+
     print "Sequential naive prediction self-correlation:"
-    print pearsonr(counts.ravel(), second_naive.ravel())
+    print pearsonr(counts.ravel(), final_naive.ravel())
     print "Sequential naive prediction (non-zero only):"
-    print pearsonr(counts[counts > 0], second_naive[counts > 0])
+    print pearsonr(counts[counts > 0], final_naive[counts > 0])
 
     print "Computing deviation means:"
 

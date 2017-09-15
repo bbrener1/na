@@ -37,9 +37,12 @@ def compact_regression(l, masked = True):
     result = (linregress(l[0][mask],l[1][mask]),l[2],l[3])
     return result
 
-def compact_ts_est(l):
+def compact_ts_est(l, masked = True):
     try:
-        result = (theilslopes(l[0],l[1]),l[2],l[3])
+        mask = np.ones(l[0].shape, dtype=bool)
+        if masked:
+            mask = np.logical_and(l[0] > 0,l[1] > 0)
+        result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
     except ValueError:
         result = ((0,0,0,0),l[2],l[3])
     return result
@@ -79,7 +82,7 @@ class stripped_regression:
             self.predict_cell(self.counts[pick,:], truth = self.counts[pick,:], masked=True)
 
 
-    def parallel_regression(self, counts = None, method = 'ols', process_limit = False):
+    def parallel_regression(self, counts = None, method = 'ols', masking = False , process_limit = False):
 
         if str(counts) == "None":
             counts = self.counts
@@ -95,7 +98,7 @@ class stripped_regression:
         pval = np.zeros((counts.shape[1],counts.shape[1]))
 
         if process_limit:
-            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,int(process_limit)))
         else:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
         # pool = mlt.Pool(processes=10)
@@ -162,7 +165,7 @@ class stripped_regression:
 
         return partial_correlation
 
-    def predict_cell(self, cell, index = False, truth = None, verbose = True, masked = False, mask = None):
+    def predict_cell(self, cell, index = False, truth = None, verbose = True, masked = False, mask = None, dropout = False):
 
         if index:
             cell = self.counts[cell,:]
@@ -201,14 +204,17 @@ class stripped_regression:
 
         ## Compute influence of each individual prediction on the weighted average:
 
-        total_weights = np.sum(correlation_derived_weights, axis = 0)
+        if dropout:
+            total_weights = np.sum(correlation_derived_weights, axis = 0)
 
-        relative_weights = np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights.shape[0],1)))
+            relative_weights = np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights.shape[0],1)))
 
-        influence = np.multiply(raw_predicted, relative_weights)
+            influence = np.multiply(raw_predicted, relative_weights)
 
-        dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
+            dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
 
+        else:
+             dropout_adjusted = None
 
         if str(truth) != "None" and verbose:
             print "Truth To Mean"
@@ -261,7 +267,7 @@ class stripped_regression:
                         pass
 
         if process_limit:
-            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,20))
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,int(process_limit)))
         else:
             pool = mlt.Pool(processes=mlt.cpu_count()-2)
 
