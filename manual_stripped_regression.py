@@ -106,23 +106,31 @@ class stripped_regression:
 
             returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
+            for i,c in enumerate(returns):
+                slopes[c[1],c[2]] = c[0][0]
+                intercepts[c[1],c[2]] = c[0][1]
+                correlations[c[1],c[2]] = c[0][2]
+                pval[c[1],c[2]] = c[0][3]
+                if i%10000==0:
+                    print i
+
         if method == 'theil_sen':
 
-            counts
             returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+
+            for i,c in enumerate(returns):
+                slopes[c[1],c[2]] = c[0][0]
+                intercepts[c[1],c[2]] = c[0][1]
+                if i%10000==0:
+                    print i
+
+            correlations = np.corrcoef(counts.T)
 
         if method != "ols" and method != "theil_sen":
             raise AttributeError("Not a legal estimator selection, use 'ols' or 'theil_sen'")
 
-        for i,c in enumerate(returns):
-            slopes[c[1],c[2]] = c[0][0]
-            intercepts[c[1],c[2]] = c[0][1]
-            correlations[c[1],c[2]] = c[0][2]
-            pval[c[1],c[2]] = c[0][3]
-            if i%10000==0:
-                print i
 
-        slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
+        # slopes[np.identity(slopes.shape[0],dtype=bool)] = 0
 
         correlations[np.identity(correlations.shape[0],dtype=bool)] = 0
 
