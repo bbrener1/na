@@ -123,7 +123,7 @@ class stripped_regression:
 
         if method == 'theil_sen':
 
-            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), [masking]*(counts.shape[1]**2), chunksize=100)
+            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
             for i,c in enumerate(returns):
                 slopes[c[1],c[2]] = c[0][0]
