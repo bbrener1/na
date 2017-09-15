@@ -30,14 +30,16 @@ def compact_prediction(l):
         print l[2]
     return result
 
-def compact_regression(l, masked = True):
+def compact_regression(l):
+    masked = l[4]
     mask = np.ones(l[0].shape, dtype=bool)
     if masked:
         mask = np.logical_and(l[0] > 0,l[1] > 0)
     result = (linregress(l[0][mask],l[1][mask]),l[2],l[3])
     return result
 
-def compact_ts_est(l, masked = True):
+def compact_ts_est(l):
+    masked = l[4]
     try:
         mask = np.ones(l[0].shape, dtype=bool)
         if masked:
@@ -51,7 +53,7 @@ def compact_ts_est(l, masked = True):
 class stripped_regression:
 
 
-    def __init__(self, counts, solved=False, prefix="", method='ols',process_limit = False):
+    def __init__(self, counts, solved=False, prefix="", method='ols',masking=False,process_limit = False):
 
         self.counts = matrix_assurance(counts)
         self.prefix = prefix
@@ -66,7 +68,7 @@ class stripped_regression:
             self.correlations = np.load(prefix + "correlations_lin_reg.npy")
             self.pval = np.load(prefix + "pval_lin_reg.npy")
         else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method, process_limit=process_limit)
+            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method, process_limit=process_limit,masking = masking)
 
         self.imputed_counts = None
 
@@ -109,7 +111,7 @@ class stripped_regression:
 
         if method == 'ols':
 
-            returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+            returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
             for i,c in enumerate(returns):
                 slopes[c[1],c[2]] = c[0][0]
@@ -121,7 +123,7 @@ class stripped_regression:
 
         if method == 'theil_sen':
 
-            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1]), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), [masking]*(counts.shape[1]**2), chunksize=100)
+            returns = pool.imap_unordered( compact_ts_est, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), [masking]*(counts.shape[1]**2), chunksize=100)
 
             for i,c in enumerate(returns):
                 slopes[c[1],c[2]] = c[0][0]
