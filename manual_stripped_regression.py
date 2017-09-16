@@ -54,6 +54,8 @@ def compact_ts_est(l):
         else:
             result = (theilslopes(l[0],l[1]),l[2],l[3])
     except IndexError:
+        print type(l[0])
+        print type(l[1])
         print l[0].shape
         print l[1].shape
         print mask.shape
