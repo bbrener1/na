@@ -45,7 +45,7 @@ def compact_ts_est(l):
         if masked:
             mask = np.logical_and(l[0] > 0,l[1] > 0)
         result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
-    except ValueError:
+    except ValueError,IndexError:
         result = ((0,0,0,0),l[2],l[3])
     return result
 
