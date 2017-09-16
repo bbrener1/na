@@ -48,8 +48,15 @@ def compact_ts_est(l):
             mask = np.logical_and(l[0] > 0,l[1] > 0)
             if np.sum(mask) == 0:
                 print "Empty mask, TS Gets to return statement"
-                return((0,0,0,0),l[2],l[3])
-        result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
+                result = ((0,0,0,0),l[2],l[3])
+            else:
+                result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
+        else:
+            result = (theilslopes(l[0],l[1]),l[2],l[3])
+    except IndexError:
+        print l[0].shape
+        print l[1].shape
+        result = ((0,0,0,0),l[2],l[3])
     except Exception as who:
         print who
         result = ((0,0,0,0),l[2],l[3])
