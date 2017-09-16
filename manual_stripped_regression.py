@@ -63,7 +63,7 @@ def compact_ts_est(l):
     #     print l[0][mask].shape
     #     print l[1][mask].shape
     #     result = ((0,0,0,0),l[2],l[3])
-    except ValueError
+    except ValueError:
         result = ((0,0,0,0),l[2],l[3])
     except Exception as who:
         print who
