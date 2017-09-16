@@ -3,6 +3,8 @@
 import multiprocessing as mlt
 from multiprocessing.managers import BaseManager, BaseProxy
 
+from itertools import imap
+
 import sys
 
 import numpy as np
@@ -46,6 +48,7 @@ def compact_ts_est(l):
             mask = np.logical_and(l[0] > 0,l[1] > 0)
             if np.sum(mask) == 0:
                 print "Empty mask, TS Gets to return statement"
+                raw_input("Keep going?")
                 return((0,0,0,0),l[2],l[3])
         result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
     except ValueError:
@@ -114,7 +117,7 @@ class stripped_regression:
 
         if method == 'ols':
 
-            returns = pool.imap_unordered( compact_regression, map(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
+            returns = pool.imap_unordered( compact_regression, imap(lambda z: (counts[:,z[0]],counts[:,z[1]],z[0],z[1],masking), [(x, y) for x in range(counts.shape[1]) for y in range(counts.shape[1])] ), chunksize=100)
 
             for i,c in enumerate(returns):
                 slopes[c[1],c[2]] = c[0][0]
