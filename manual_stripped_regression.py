@@ -56,6 +56,9 @@ def compact_ts_est(l):
     except IndexError:
         print l[0].shape
         print l[1].shape
+        print mask.shape
+        print l[0][mask]
+        print l[1][mask]
         result = ((0,0,0,0),l[2],l[3])
     except Exception as who:
         print who
