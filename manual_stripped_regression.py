@@ -45,7 +45,7 @@ def compact_ts_est(l):
     try:
         mask = np.ones(l[0].shape, dtype=bool)
         if masked:
-            mask = np.logical_and(l[0] > 0,l[1] > 0)
+            mask = np.logical_and(l[0] > 0,l[1] > 0,dtype=bool)
             if np.sum(mask) == 0:
                 print "Empty mask, TS Gets to return statement"
                 result = ((0,0,0,0),l[2],l[3])
