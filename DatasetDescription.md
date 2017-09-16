@@ -81,3 +81,8 @@ On the one hand, we shouldn't be surprised that clustering brings together simil
 
 On the other hand, it suggests to us a slightly less obvious point. When we see a random-looking distribution in gene expression values relative to some factor (such as gene vs gene scatter plot), we might be tempted to think of the fact that distribution looks like a bell curve or something similar as being the result of technical noise or "just biology being biology". On the other hand, looking at how well ordered this heatmap looks, perhaps the degree of randomness in the average genetic expression bell curve is smaller than it appears?
 
+## Cell Types?
+
+Now, it might be useful for us to save this sorted version of the plot as well as the re-ordered cell and gene labels. 
+
+## Gene-gene relationships/Prediction
