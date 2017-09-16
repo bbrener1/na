@@ -48,10 +48,10 @@ def compact_ts_est(l):
             mask = np.logical_and(l[0] > 0,l[1] > 0)
             if np.sum(mask) == 0:
                 print "Empty mask, TS Gets to return statement"
-                raw_input("Keep going?")
                 return((0,0,0,0),l[2],l[3])
         result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
-    except:
+    except as who:
+        print who
         result = ((0,0,0,0),l[2],l[3])
     return result
 
