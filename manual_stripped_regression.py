@@ -50,7 +50,7 @@ def compact_ts_est(l):
                 print "Empty mask, TS Gets to return statement"
                 return((0,0,0,0),l[2],l[3])
         result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
-    except as who:
+    except Exception as who:
         print who
         result = ((0,0,0,0),l[2],l[3])
     return result
