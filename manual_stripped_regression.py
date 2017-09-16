@@ -50,7 +50,6 @@ def compact_ts_est(l):
         result = (theilslopes(l[0][mask],l[1][mask]),l[2],l[3])
     except ValueError:
         result = ((0,0,0,0),l[2],l[3])
-    print "Mask wasn't empty!"
     return result
 
 
