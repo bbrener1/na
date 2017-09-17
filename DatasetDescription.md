@@ -105,3 +105,8 @@ Ok, so far not so interesting, most genes don't predict each other's behavior ve
 
 But there are obviously genes that correlate to each other very well, as we saw from our clustered heatmap. How do we get to see what their behavior looks like? Well the clustering parameter for genes on the heatmap was correlation, so first we'd like to know which genes correlate to which, and what kinds of correlations we see in general. 
 
+Numpy provides us with the "corrcoef" function which does this quickly and helpfully by computing the Pearson correlation of each row in a matrix to each other row in the matrix. 
+
+At face value, we see that low or negligible correlations are present between most genes (note that the plot is logarithmic), but some genes do have high correlation. 
+
+![](https://github.com/bbrener1/na/blob/master/figures/correlation_histogram.png "Histogram of all possible correlation pairings")
