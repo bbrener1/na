@@ -133,7 +133,7 @@ clustered_header = np.load('clustered_header.npy')
 # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 # plt.savefig("figures/gene_scatter_gigaplex.png",dpi=500)
 
-plt.figure("correlation_histogram",figsize=(4,4))
+plt.figure("correlation_histogram",figsize=(5,4))
 plt.suptitle("Frequencies of correlations between genes")
 correlations = np.corrcoef(counts.T)
 plt.subplot(111)
