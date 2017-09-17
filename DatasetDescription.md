@@ -101,5 +101,7 @@ First off, when we were looking at the potential expression values that genes ex
 
 ![](https://github.com/bbrener1/na/blob/master/figures/gene_scatter_gigaplex.png "Various randomly chosen genes scattered against each other")
 
-Ok so far not so interesting, most genes don't predict each other's behavior very well. When we see non-diagonal patterns like the ones that are common on this plot, mainly it just means one of the genes is not very bimodal. (Interesting to see that Ttc30b is tri-modal, this is kind of unexpected. If this figure has been changed since then check it out sometime, it's pretty weird.) 
+Ok, so far not so interesting, most genes don't predict each other's behavior very well. When we see non-diagonal patterns like the ones that are common on this plot, mainly it just means one of the genes is not very bimodal. (Interesting to see that Ttc30b is tri-modal, this is kind of unexpected. If this figure has been changed since then check it out sometime, it's pretty weird.) 
+
+But there are obviously genes that correlate to each other very well, as we saw from our clustered heatmap. How do we get to see what their behavior looks like? Well the clustering parameter for genes on the heatmap was correlation, so first we'd like to know which genes correlate to which, and what kinds of correlations we see in general. 
 
