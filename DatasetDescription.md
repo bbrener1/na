@@ -107,6 +107,12 @@ But there are obviously genes that correlate to each other very well, as we saw 
 
 Numpy provides us with the "corrcoef" function which does this quickly and helpfully by computing the Pearson correlation of each row in a matrix to each other row in the matrix. 
 
-At face value, we see that low or negligible correlations are present between most genes (note that the plot is logarithmic), but some genes do have high correlation. 
+At face value, we see that low or negligible correlations are present between most genes (note that the plot is logarithmic), but some genes do have substantial correlation. 
 
 ![](https://github.com/bbrener1/na/blob/master/figures/correlation_histogram.png "Histogram of all possible correlation pairings")
+
+Let's see what a random picking of correlated genes looks like when scattered against each other first, and then we can look at the correlations between a slice of the clustered heatmap:
+
+![](https://github.com/bbrener1/na/blob/master/figures/correlated_scatter_gigaplex.png "Scatterings of correlated genes")
+
+Ok, now we are seeing some more interesting plots. There are about 34000 genes that correlate to each other at a rate higher than .5, out of 22 million total possible correlations. 
