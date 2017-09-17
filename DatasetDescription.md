@@ -99,6 +99,7 @@ At a most basic level we are sort of hoping that a linear, exponential, or polyn
 
 First off, when we were looking at the potential expression values that genes exhibited, we looked at a set of 20 histograms to see what kinds of gene expression values genes could take on. Let's do something similar now, but generate many random plots of gene-gene scatterplots. Considering that gene expression is bimodal, but the average genes should bear relatively little influence on each other, generally we should see four blobs on our scatter plots, one in each corner of the plot, of relatively even intensities. In genes that are able to predict each others expression we should see uneven sizes between the blobs, but it's unclear how often we should encounter such relationships. (Actually we'll answer that question a little later, but for now let's just do something quick and dirty)
 
+![](https://github.com/bbrener1/na/blob/master/figures/gene_scatter_gigaplex.png "Various randomly chosen genes scattered against each other)
 
-
+Ok so far not so interesting, most genes don't predict each other's behavior very well. When we see non-diagonal patterns like the ones that are common on this plot, mainly it just means one of the genes is not very bimodal. (Interesting to see that Ttc30b is tri-modal, this is kind of unexpected. If this figure has been changed since then check it out sometime, it's pretty weird.) 
 
