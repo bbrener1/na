@@ -116,3 +116,7 @@ Let's see what a random picking of correlated genes looks like when scattered ag
 ![](https://github.com/bbrener1/na/blob/master/figures/correlated_scatter_gigaplex.png "Scatterings of correlated genes")
 
 Ok, now we are seeing some more interesting plots. There are about 34000 genes that correlate to each other at a rate higher than .5, out of 22 million total possible correlations. 
+
+On the other hand, if we consider correlations between .1 and .5 (still probably pretty significant, but much more common), we find that there are 3.2 million such correlations (nearly 10% of all possible gene-gene pairings), and they look somethign like this:
+
+![](https://github.com/bbrener1/na/blob/master/figures/correlated_scatter_gigaplex(intermediate).png "Scatterings of (weakly) correlated genes")
