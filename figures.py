@@ -16,10 +16,11 @@ from sklearn.cluster import AgglomerativeClustering
 counts = np.load('counts.npy')
 header = np.load('header_backup.npy')
 correlations = np.corrcoef(counts.T)
-
+correlations[np.identity(correlations.shape[0],dtype=bool)]=0
 
 clustered_counts = np.load('clustered_counts.npy')
 clustered_header = np.load('clustered_header.npy')
+
 
 # plt.figure("counts_frequency")
 # plt.hist(counts.ravel(),bins=101,log=True)
@@ -149,7 +150,7 @@ plt.figure("random_correlates")
 plt.suptitle("Set of scatter plots for correlated gene pairs")
 plt.xlabel("Log2 gene expression values")
 plt.ylabel("Frequency")
-x, y = np.where(np.abs(correlations) > 0)
+x, y = np.where(np.abs(correlations) > .5)
 for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
     plt.subplot(4,5,i+1)
     plt.xlabel(header[x[pick]],size=6)
