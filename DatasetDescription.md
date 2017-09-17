@@ -85,4 +85,20 @@ On the other hand, it suggests to us a slightly less obvious point. When we see 
 
 Now, it might be useful for us to save this sorted version of the plot as well as the re-ordered cell and gene labels. 
 
+## Deviation matrices
+
+Consider local pseudo-cells
+
 ## Gene-gene relationships/Prediction
+
+I'm going to skip ahead a little bit to investigate a question that I am currently working on, which is the ability of genes to predict each other's behavior. 
+
+We have many gene-gene comparisons to make when we are working with 4773 genes (specifically 22 million comparisons) to determine whether the expression of one gene influences the expression of the other. Determining whether this is the case is a non-trivial thing, and one of the first steps we should take is, again, just looking at some data. 
+
+At a most basic level we are sort of hoping that a linear, exponential, or polynomial relationship exists between the expression of one gene and the expression of another gene. We can also consider relationships that have a more complicated nature, but generally, the more complex a relationship between two genes, the worse our odds are of inferring it accurately. So let's ask some basic questions first. 
+
+First off, when we were looking at the potential expression values that genes exhibited, we looked at a set of 20 histograms to see what kinds of gene expression values genes could take on. Let's do something similar now, but generate many random plots of gene-gene scatterplots. Considering that gene expression is bimodal, but the average genes should bear relatively little influence on each other, generally we should see four blobs on our scatter plots, one in each corner of the plot, of relatively even intensities. In genes that are able to predict each others expression we should see uneven sizes between the blobs, but it's unclear how often we should encounter such relationships. (Actually we'll answer that question a little later, but for now let's just do something quick and dirty)
+
+
+
+
