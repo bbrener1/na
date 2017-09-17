@@ -147,7 +147,7 @@ clustered_header = np.load('clustered_header.npy')
 # plt.savefig("figures/correlation_histogram.png")
 
 plt.figure("random_correlates")
-plt.suptitle("Set of scatter plots for correlated gene pairs")
+plt.suptitle("Set of scatter plots for correlated gene pairs, r>.5")
 plt.xlabel("Log2 gene expression values")
 plt.ylabel("Frequency")
 x, y = np.where(np.abs(correlations) > .5)
@@ -159,4 +159,21 @@ for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
     plt.yticks(np.arange(2,10,2),size=3)
     plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
 plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+print x.shape
 plt.savefig("figures/correlated_scatter_gigaplex.png",dpi=500)
+
+plt.figure("random_correlates")
+plt.suptitle("Set of scatter plots for correlated gene pairs, .1<r<.5")
+plt.xlabel("Log2 gene expression values")
+plt.ylabel("Frequency")
+x, y = np.where(np.logical_and(np.abs(correlations) > .1,np.abs(correlations) < .5))
+for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
+    plt.subplot(4,5,i+1)
+    plt.xlabel(header[x[pick]],size=6)
+    plt.ylabel(header[y[pick]],size=6)
+    plt.xticks(np.arange(0,14,2),size=3)
+    plt.yticks(np.arange(2,10,2),size=3)
+    plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+print x.shape
+plt.savefig("figures/correlated_scatter_gigaplex(intermediate).png",dpi=500)
