@@ -177,6 +177,10 @@ Now, however, we are getting into the good stuff. Here we see that KLF1 correspo
 
 So what's a girl to do? This is one of the central questions of gene regulation studies. Many people throw up their hands, call these types of triplets (or more than triplets) "gene blocks", throw them up in databases, and let biologists sort it all out. To be fair, manually looking at some of these blocks, it can sometimes be obvious which transcription factor is really controlling a group of proteins. Other times, these relationships get less obvious and more muddled. 
 
+We can examine some of these relationships by looking at the checker patterns that jump out at us from the clustering procedure. If we look more closely at the specific checks, namely what genes and cells go into them, we can examine some of the obvious correlations between these genes and the cells they are active in, eg:
+
+
+
 Other approaches try to look at things like mutual information. ARACNE is a good example, esssentially, by examining the triplets like this and computing mutual information three ways, they purport to discover only the most direct relationships, since theoretically the mutual information between two genes will be greatest when there is a direct relationship between them, and will be less if there is a mediating gene. 
 
 I had a slightly different train of thought. In order to look at that, let's take alook at some of those cells we so helpfully grouped together earlier. 
