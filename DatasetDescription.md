@@ -115,8 +115,68 @@ Let's see what a random picking of correlated genes looks like when scattered ag
 
 ![](https://github.com/bbrener1/na/blob/master/figures/correlated_scatter_gigaplex.png "Scatterings of correlated genes")
 
-Ok, now we are seeing some more interesting plots. There are about 34000 genes that correlate to each other at a rate higher than .5, out of 22 million total possible correlations. 
+Ok, now we are seeing some more interesting plots. There are about 34000 gene-gene pairings that correlate to each other at a rate higher than .5, out of 22 million total possible correlations. 
 
-On the other hand, if we consider correlations between .1 and .5 (still probably pretty significant, but much more common), we find that there are 3.2 million such correlations (nearly 10% of all possible gene-gene pairings), and they look somethign like this:
+On the other hand, if we consider correlations between .1 and .5 (still probably pretty significant, but much more common), we find that there are 3.2 million such correlations (nearly 10% of all possible gene-gene pairings), and they look something like this:
 
 ![](https://github.com/bbrener1/na/blob/master/figures/correlated_scatter_gigaplex(intermediate).png "Scatterings of (weakly) correlated genes")
+
+Ok, so what do we see? We are observing a still bimodal sort of interaction, but essentially you see certain genes in concurrent states more often than not. Finding really unambiguous relationships though, isn't very common.
+
+This serves as encouraging news, parsing through a network of 3.2 million gene-gene interactions would be difficult, and 34k gene-gene interactions sounds like a plausible amount if we consider scale-free network topologies as being a good representation of human genetic regulation. Unfortunately if we actually look at the correlations observed, it becomes clear that most of them are probably not direct genetic regulatory relationships but merely what they sound like, correlations. 
+
+Let's examine this in a bit more detail by looking at some of the top of the gene-gene pairings that have the top correlations: 
+
+Rhd	Slc38a5	0.877749294748
+Atp1b2	Tspo2	0.879771717678
+Tspo2	Atp1b2	0.879771717678
+Birc5	Ccna2	0.881493438329
+Ccna2	Birc5	0.881493438329
+Lars2	Gm15564	0.881922602514
+Gm15564	Lars2	0.881922602514
+Hba-a1	Hba-a2	0.883262737553
+Hba-a2	Hba-a1	0.883262737553
+Igkv14-126	Ighv11-2	0.884403538866
+Ighv11-2	Igkv14-126	0.884403538866
+Ctsg	Mpo	0.885019347892
+Mpo	Ctsg	0.885019347892
+Rhd	Sphk1	0.885555721254
+Sphk1	Rhd	0.885555721254
+Rhag	Rhd	0.886360349907
+Rhd	Rhag	0.886360349907
+Ltf	Retnlg	0.888045084374
+Retnlg	Ltf	0.888045084374
+Car1	Aqp1	0.888748995754
+Aqp1	Car1	0.888748995754
+Car1	Tspo2	0.889320897323
+Tspo2	Car1	0.889320897323
+Cldn13	Rhd	0.890933003973
+Rhd	Cldn13	0.890933003973
+Atp1b2	Car1	0.891350787339
+Car1	Atp1b2	0.891350787339
+Klf1	Aqp1	0.891865584038
+Aqp1	Klf1	0.891865584038
+Car1	Klf1	0.896917892665
+Klf1	Car1	0.896917892665
+Jchain	Igkc	0.909690216796
+Igkc	Jchain	0.909690216796
+Atp5g1	Gm10039	0.943769882157
+Gm10039	Atp5g1	0.943769882157
+Gm13461	Ran	0.947917392347
+Ran	Gm13461	0.947917392347
+Hsp90aa1	Gm12346	0.950589822034
+Gm12346	Hsp90aa1	0.950589822034
+Cd63	Cd63-ps	0.969345523311
+Cd63-ps	Cd63	0.969345523311
+Igkv4-50	Ighv9-1	0.990570856454
+Ighv9-1	Igkv4-50	0.990570856454
+Ok, so top correlations are two immunoglobulin subunits, which is great news because these should rarely have non-1-to-1 stoichiometry. Cd63 is correlated to its pseudogene. At position 3 we are already getting into something interesting. GM12346 is a predicted gene of unknown function that is apparently tightly regulated by Hsp90. Position 4 is again a gene of unknown function, though this time annotated as a probable reverse-transcribed pseudogene, tightly correlated with Ran. Interesting. Brief investigation implies that this pseudogene is located in the middle of LRP1B, a low density lipoprotein that serves as a tumor supressor (???), and is a common target for papilomaviridae, which frequently induces cancer. This mouse lucked out with the excellent healthcare it got. Ran interaction is intersting though. Ran is a decent marker for cell cycle, so perhaps this pseudogene is cell-cycle correlated? Spot 5, more pseudogenes. This presudogene appears to be a reverse-transcribed mRNA of an ATP synthase component, and it correlates with the expression of the actual ATP synthase componenet. This may be an alignment artifact, actually. Spot 6 is more immunoglobulin componenets correlating to each other.
+
+Now, however, we are getting into the good stuff. Here we see that KLF1 corresponds well to a couple of things that RBCs really need. Both Aquaporin and Car1 are important componenets of RBCs and this is probably the first genuine regulatory relationship we have seen so far. This is the type of result that we are really hoping to see. But, out of curiosity, let's try to take a look at the correlation between Car1 and Aqp1. Oh... It's like 10 lines up the list, and it's .88. This is the type of problem that we're going to run into a lot. If a really meaty regulatory factor like Klf1 has a tight regulatory relationship with two things, those two things will look like they're acting on each other as well. 
+
+So what's a girl to do? This is one of the central questions of gene regulation studies. Many people throw up their hands, call these types of triplets (or more than triplets) "gene blocks", throw them up in databases, and let biologists sort it all out. To be fair, manually looking at some of these blocks, it can sometimes be obvious which transcription factor is really controlling a group of proteins. Other times, these relationships get less obvious and more muddled. 
+
+Other approaches try to look at things like mutual information. ARACNE is a good example, esssentially, by examining the triplets like this and computing mutual information three ways, they purport to discover only the most direct relationships, since theoretically the mutual information between two genes will be greatest when there is a direct relationship between them, and will be less if there is a mediating gene. 
+
+I had a slightly different train of thought. In order to look at that, let's take alook at some of those cells we so helpfully grouped together earlier. 
+
