@@ -5,9 +5,12 @@ from multiprocessing.managers import BaseManager, BaseProxy
 
 from itertools import imap
 
+import pickle
 import sys
 
 import numpy as np
+
+from sklear.ensemble import GradientBoostingRegressor
 
 from sklearn import preprocessing as pre
 
@@ -25,6 +28,11 @@ import check_hash as chk
 from matrix_assurance import matrix_assurance
 
     # Wrapper function for prediction for the purposes of multiprocessing:
+
+def forest_builder(x):
+    model = GradientBoostingRegressor()
+    model.fit(np.delete(x[0].counts,x[1],1),x[0].counts[x[1]])
+    return (model,x[1])
 
 def compact_prediction(l):
     result = l[0].predict_cell(l[1], verbose=False, masked=True)[0]
@@ -81,18 +89,21 @@ class stripped_regression:
 
         print "Main successful"
 
-        if solved or chk.check_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix):
-            self.slopes = np.load(prefix + "slopes_lin_reg.npy")
-            self.intercepts = np.load(prefix + "intercepts_lin_reg.npy")
-            self.means = np.load(prefix + "means_lin_reg.npy")
-            self.correlations = np.load(prefix + "correlations_lin_reg.npy")
-            self.pval = np.load(prefix + "pval_lin_reg.npy")
-        else:
-            self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method, process_limit=process_limit,masking = masking)
+        if method == 'ols' or method == 'theil_sen':
+            if solved or chk.check_hash(counts, "slopes_lin_reg.npy", prefix=self.prefix):
+                self.slopes = np.load(prefix + "slopes_lin_reg.npy")
+                self.intercepts = np.load(prefix + "intercepts_lin_reg.npy")
+                self.means = np.load(prefix + "means_lin_reg.npy")
+                self.correlations = np.load(prefix + "correlations_lin_reg.npy")
+                self.pval = np.load(prefix + "pval_lin_reg.npy")
+            else:
+                self.slopes, self.intercepts, self.means, self.correlations, self.pval = self.parallel_regression(self.counts, method=method, process_limit=process_limit,masking = masking)
 
-        self.imputed_counts = None
+            self.imputed_counts = None
 
-        self.partial = self.partial_correlation(self.counts)
+            self.partial = self.partial_correlation(self.counts)
+        elif method == 'gradient_boost':
+            self.parallel_gradient_boost()
 
 
     def test(self):
@@ -329,6 +340,128 @@ class stripped_regression:
 
             return combined
 
+    def parallel_gradient_boost(self, counts = None, process_limit = False):
+
+        if str(counts) == "None":
+            counts = self.counts
+
+        forests = []
+
+        if process_limit:
+            pool = mlt.Pool(processes=min(mlt.cpu_count()-2,int(process_limit)))
+        else:
+            pool = mlt.Pool(processes=mlt.cpu_count()-2)
+        # pool = mlt.Pool(processes=10)
+
+        print "Processors detected:"
+        print pool._processes
+        print "Parallel Forests Started"
+
+        returns = pool.imap_unordered(forest_builder, map(lambda x: (self,x), range(counts.shape[1])), chunksize=100)
+
+
+        for i,c in enumerate(returns):
+            forests.append[c]
+
+        ordered_forests = sorted(forests,key=lambda x: x[1])
+
+        pickle.dump(ordered_forests, open(self.prefix+'forest_regressors.pickle', mode='w'))
+
+        chk.write_hash(counts, "forest_regressors.pickle", prefix=self.prefix)
+
+        self.ordered_forests = ordered_forests
+
+        return ordered_forests
+
+    def boosted_prediction(self, cell, override=False)
+
+    # def best_gene_cell(self, cell, cycle = 0, weights = None, index = False, truth = None, verbose = True, masked = False, mask = None, dropout = False):
+    #
+    #     if index:
+    #         cell = self.counts[cell,:]
+    #
+    #     ## In raw predicted, i,j is the value of gene j in the target cell, predicted based on gene i
+    #
+    #     ## Column j of prediction matrix is all predictions of gene j in the cell. Mean of column j is
+    #     ## mean of predictions
+    #
+    #     ## Row i is cell state predicted by individual gene.
+    #
+    #     if str(weights) == None:
+    #         weights = np.zeros(self.correlations.shape)
+    #
+    #     raw_predicted = np.multiply(np.tile(cell,(self.slopes.shape[0],1)).T,self.slopes) + self.intercepts
+    #
+    #     unadjusted = np.mean(raw_predicted, axis = 0)
+    #
+    #     maxima = zip(np.arange(self.correlations.shape[1]),np.argmax(self.correlations(),axis=1))
+    #
+    #     for maximum in maxima:
+    #         weights[maximum]
+    #
+    #     correlation_derived_weights[correlation_derived_weights > 10000] = 10000
+    #
+    #
+    #     if masked:
+    #         if str(mask) == "None":
+    #             mask = cell == 0
+    #
+    #         correlation_derived_weights[mask] = np.zeros(correlation_derived_weights.shape[1])
+    #
+    #     correlation_adjusted = np.average(raw_predicted, axis = 0, weights = correlation_derived_weights)
+    #
+    #     slope_correlation_weights = np.power(1-np.sqrt(np.abs(np.multiply(self.correlations,self.slopes))),-1)
+    #     slope_correlation_weights[slope_correlation_weights > 10000] = 10000
+    #
+    #     slope_corr_adjusted = np.average(raw_predicted, axis=0, weights = slope_correlation_weights)
+
+        # print "Computed correlation adjusted values, computing dropouts:"
+
+        # Predictied value j given dropout of i
+
+        ## Compute influence of each individual prediction on the weighted average:
+
+        # if dropout:
+        #     total_weights = np.sum(correlation_derived_weights, axis = 0)
+        #
+        #     relative_weights = np.divide(correlation_derived_weights, np.tile(total_weights, (correlation_derived_weights.shape[0],1)))
+        #
+        #     influence = np.multiply(raw_predicted, relative_weights)
+        #
+        #     dropout_adjusted = np.tile(correlation_adjusted,(influence.shape[0],1)) - influence
+
+        # else:
+        #      dropout_adjusted = None
+        #
+        # if str(truth) != "None" and verbose:
+        #     print "Truth To Mean"
+        #     print pearsonr(truth,self.means)
+        #     print "Guess"
+        #     print "======="
+        #
+        #     print "Unadjusted"
+        #     print pearsonr(unadjusted,truth)
+        #     print "Correlation Adjusted:"
+        #     print pearsonr(correlation_adjusted,truth)
+        #     print "Slope/Correlation Adjusted:"
+        #     print pearsonr(slope_corr_adjusted, truth)
+        #     print "======"
+        #     print "Centered Data"
+        #     print pearsonr(unadjusted-self.means,truth-self.means)
+        #     print pearsonr(correlation_adjusted-self.means,truth-self.means)
+        #     print pearsonr(slope_corr_adjusted-self.means,truth-self.means)
+        #     print "======"
+        #     print "True sum"
+        #     print np.sum(np.abs(truth-self.means))
+        #     print "Prediction sum"
+        #     print np.sum(np.abs(unadjusted-self.means))
+        #     print np.sum(np.abs(correlation_adjusted-self.means))
+        #     print np.sum(np.abs(slope_corr_adjusted-self.means))
+        #
+        #     print "\n\n"
+        #
+        # return correlation_adjusted, raw_predicted, correlation_derived_weights #, dropout_adjusted
+
 
     # def masked_predict(self, cell, index = False, truth = None , mask= None, verbose = True):
     #
@@ -382,12 +515,11 @@ class stripped_regression:
     #         print "\n\n"
     #
     #     return correlation_adjusted, raw_predicted, correlation_derived_weights, dropout_adjusted
-
-    # def predict_gene(gene, index,  slopes,intercepts, correlations, pval, truth = None):
     #
-    #     temp = np.zeros((gene.shape[0],1))
-    #     temp[:,0]=gene
-    #     gene = temp
+    # def predict_gene(self, gene, index = False, truth = None, verbose = True, masked = False, mask = None, dropout = False):
+    #
+    #
+
     #
     #     raw_predicted = np.multiply(np.tile(gene,(1,slopes.shape[0])),np.tile(slopes[index],(gene.shape[0],1)))
 

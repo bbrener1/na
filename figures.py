@@ -72,7 +72,7 @@ clustered_header = np.load('clustered_header.npy')
 # cfig.colorbar(mappable=im,cax=ax2)
 # plt.savefig('figures/raw_expression_heatmap', dpi=600)
 #
-
+#
 #
 #
 # gene_linked = hrc.linkage(counts.T, method='average', metric='correlation')
@@ -111,6 +111,7 @@ clustered_header = np.load('clustered_header.npy')
 # im = ax3.imshow(sorted_doubly, cmap='hot', aspect='auto')
 # ax3.set_xticks(np.arange(0,4773,100))
 # ax3.set_yticks(np.arange(0,1656,100))
+# ax.tick_params(labelsize=6)
 # # plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
 # # plt.xlabel("Genes")
 # # plt.ylabel("Cells")
@@ -122,7 +123,7 @@ clustered_header = np.load('clustered_header.npy')
 # np.save("gene_clustering_indecies", gene_dendrogram['leaves'])
 # np.save("cell_clustering_indecies", cell_dendrogram['leaves'])
 # plt.savefig("figures/doubly_clustered_raw_genes.png", dpi=800)
-
+#
 # fig = plt.figure("gene_scatter_gigaplex")
 # plt.suptitle("Set of scatter plots of expression values for randomly chosen gene pairs")
 # plt.xlabel("Log2 gene expression values")
@@ -145,35 +146,41 @@ clustered_header = np.load('clustered_header.npy')
 # plt.xlabel("Pearson correlation value, gene-gene comparison")
 # plt.ylabel("Frequency (log10 scale)")
 # plt.savefig("figures/correlation_histogram.png")
+#
+# plt.figure("random_correlates")
+# plt.suptitle("Set of scatter plots for correlated gene pairs, r>.5")
+# plt.xlabel("Log2 gene expression values")
+# plt.ylabel("Frequency")
+# x, y = np.where(np.abs(correlations) > .5)
+# for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
+#     plt.subplot(4,5,i+1)
+#     plt.xlabel(header[x[pick]],size=6)
+#     plt.ylabel(header[y[pick]],size=6)
+#     plt.xticks(np.arange(0,14,2),size=3)
+#     plt.yticks(np.arange(2,10,2),size=3)
+#     plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
+# plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+# print x.shape
+# plt.savefig("figures/correlated_scatter_gigaplex.png",dpi=500)
+#
+# plt.figure("random_correlates")
+# plt.suptitle("Set of scatter plots for correlated gene pairs, .1<r<.5")
+# plt.xlabel("Log2 gene expression values")
+# plt.ylabel("Frequency")
+# x, y = np.where(np.logical_and(np.abs(correlations) > .1,np.abs(correlations) < .5))
+# for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
+#     plt.subplot(4,5,i+1)
+#     plt.xlabel(header[x[pick]],size=6)
+#     plt.ylabel(header[y[pick]],size=6)
+#     plt.xticks(np.arange(0,14,2),size=3)
+#     plt.yticks(np.arange(2,10,2),size=3)
+#     plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
+# plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+# print x.shape
+# plt.savefig("figures/correlated_scatter_gigaplex(intermediate).png",dpi=500)
 
-plt.figure("random_correlates")
-plt.suptitle("Set of scatter plots for correlated gene pairs, r>.5")
-plt.xlabel("Log2 gene expression values")
-plt.ylabel("Frequency")
+high_correlation_pairings_output = open("figures/high_correlations_pairings_output.txt", mode='w')
 x, y = np.where(np.abs(correlations) > .5)
-for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
-    plt.subplot(4,5,i+1)
-    plt.xlabel(header[x[pick]],size=6)
-    plt.ylabel(header[y[pick]],size=6)
-    plt.xticks(np.arange(0,14,2),size=3)
-    plt.yticks(np.arange(2,10,2),size=3)
-    plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
-plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-print x.shape
-plt.savefig("figures/correlated_scatter_gigaplex.png",dpi=500)
-
-plt.figure("random_correlates")
-plt.suptitle("Set of scatter plots for correlated gene pairs, .1<r<.5")
-plt.xlabel("Log2 gene expression values")
-plt.ylabel("Frequency")
-x, y = np.where(np.logical_and(np.abs(correlations) > .1,np.abs(correlations) < .5))
-for i, pick in enumerate(np.random.randint(x.shape[0], size=20)):
-    plt.subplot(4,5,i+1)
-    plt.xlabel(header[x[pick]],size=6)
-    plt.ylabel(header[y[pick]],size=6)
-    plt.xticks(np.arange(0,14,2),size=3)
-    plt.yticks(np.arange(2,10,2),size=3)
-    plt.scatter(counts[:,x[pick]],counts[:,y[pick]],marker='x',s=.1,alpha=.1,c='b')
-plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-print x.shape
-plt.savefig("figures/correlated_scatter_gigaplex(intermediate).png",dpi=500)
+correlations_formatted_list = map(lambda z: (header[z[0]],header[z[1]],correlations[z[0],z[1]]), zip(x,y))
+for pairing in sorted(correlations_formatted_list, key=lambda x: x[2]):
+    high_correlation_pairings_output.write("\t".join(map(lambda x: str(x), pairing)) + "\n")
