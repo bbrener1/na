@@ -264,7 +264,7 @@ with plt.rc_context({'lines.linewidth':0.1}):
 ax1.set_xlim(left=1.0,right=.75)
 ax1.set_xscale('log')
 
-ax2 = fig.add_axes([.3,.71,.55,.2])
+ax2 = fig.add_axes([.25,.71,.6,.2])
 # display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
 with plt.rc_context({'lines.linewidth':0.1}):
     display_dendrogram = hrc.dendrogram(gene_linked, ax=ax2)
