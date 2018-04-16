@@ -185,7 +185,7 @@ We can examine some of these relationships by looking at the checker patterns th
 
 Another thing that we can do is to attempt to partition the cells in the same way. It stands to reason that if blocks of genes that co-express represent specific cellular states, then cells that occupy those states should have some degree of internal organization also. This is a cell covariance matrix:
 
-![](https://github.com/bbrener1/na/blob/master/figures/gene_covariance_simple.png "Heatmap of cell-cell correlations")
+![](https://github.com/bbrener1/na/blob/master/figures/cell_covariance_simple.png "Heatmap of cell-cell correlations")
 
 How much information can we attribute to a simple analysis of where cells rest in this space?
 A fair amount, KNN imputation of different cell-gene values generally has a correlation of ~.6, although the mean squared error is quite high at ~6, which means on average we are something like 4 orders of magnitude off about the expression value of any given gene. 
