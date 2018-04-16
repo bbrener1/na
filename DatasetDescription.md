@@ -177,11 +177,26 @@ Now, however, we are getting into the good stuff. Here we see that KLF1 correspo
 
 So what's a girl to do? This is one of the central questions of gene regulation studies. Many people throw up their hands, call these types of triplets (or more than triplets) "gene blocks", throw them up in databases, and let biologists sort it all out. To be fair, manually looking at some of these blocks, it can sometimes be obvious which transcription factor is really controlling a group of proteins. Other times, these relationships get less obvious and more muddled. 
 
+In general, you will observe something like this: 
+![](https://github.com/bbrener1/na/blob/master/figures/gene_covariance_simple.png "Heatmap of gene-gene correlations")
+
+
 We can examine some of these relationships by looking at the checker patterns that jump out at us from the clustering procedure. If we look more closely at the specific checks, namely what genes and cells go into them, we can examine some of the obvious correlations between these genes and the cells they are active in, eg:
+
+Another thing that we can do is to attempt to partition the cells in the same way. It stands to reason that if blocks of genes that co-express represent specific cellular states, then cells that occupy those states should have some degree of internal organization also. This is a cell covariance matrix:
+
+![](https://github.com/bbrener1/na/blob/master/figures/gene_covariance_simple.png "Heatmap of cell-cell correlations")
+
+How much information can we attribute to a simple analysis of where cells rest in this space?
+A fair amount, KNN imputation of different cell-gene values generally has a correlation of ~.6, although the mean squared error is quite high at ~6, which means on average we are something like 4 orders of magnitude off about the expression value of any given gene. 
+
+Let's take a look at how KNN and some other imputation methods perform at computing cell-gene values that we hide from them.
 
 
 
 Other approaches try to look at things like mutual information. ARACNE is a good example, esssentially, by examining the triplets like this and computing mutual information three ways, they purport to discover only the most direct relationships, since theoretically the mutual information between two genes will be greatest when there is a direct relationship between them, and will be less if there is a mediating gene. 
+
+
 
 I had a slightly different train of thought. In order to look at that, let's take alook at some of those cells we so helpfully grouped together earlier. 
 
