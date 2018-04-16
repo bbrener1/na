@@ -10,6 +10,7 @@ import numpy as np
 
 from scipy.cluster import hierarchy as hrc
 from sklearn.decomposition import PCA
+from sklearn.cluster.bicluster import SpectralBiclustering
 
 from sklearn.cluster import AgglomerativeClustering
 
@@ -28,6 +29,11 @@ clustered_header = np.load('clustered_header.npy')
 
 cell_clustering_indecies = np.load('cell_clustering_indecies.npy')
 gene_clustering_indecies = np.load('gene_clustering_indecies.npy')
+
+residual_gene_clusters = np.load('residual_gene_clusters.npy')
+# np.load('residual_cell_clusters.npy')
+clustered_residuals = np.load('clustered_residuals.npy')
+
 
 # plt.figure("counts_frequency")
 # plt.hist(counts.ravel(),bins=101,log=True)
@@ -234,7 +240,7 @@ gene_clustering_indecies = np.load('gene_clustering_indecies.npy')
 #     else:
 #         padded_deviation[:,i] = np.zeros(padded_deviation.shape[0])
 #         shifted_index += 1
-#
+
 #
 # print padded_deviation.shape
 # rearranged_deviation = padded_deviation[cell_clustering_indecies]
@@ -244,27 +250,153 @@ gene_clustering_indecies = np.load('gene_clustering_indecies.npy')
 #
 #
 # plt.figure('cluster_deviation')
+# plt.title("Normal Agglomerative Clustering, Residual Values")
 # image = plt.imshow(rearranged_deviation,cmap='seismic')
-# plt.colorbar(image)
+# plt.colorbar(image, fraction=.01)
 # plt.savefig('figures/neighbor_deviation.png', dpi=700)
 
-fig = plt.figure('clustered_residuals', figsize=(8,4))
 
-cell_linked = hrc.linkage(deviation_matrix, method='average', metric='cosine')
-clusterization = hrc.fcluster(cell_linked, criterion='inconsistent',t=.5,)
-cell_dendrogram = hrc.dendrogram(cell_linked,no_plot=True)
-gene_linked = hrc.linkage(deviation_matrix.T, method='average', metric='cosine')
-gene_dendrogram = hrc.dendrogram(gene_linked,no_plot=True)
+# gene_linked = hrc.linkage(counts.T, method='average', metric='correlation')
+# gene_dendrogram = hrc.dendrogram(gene_linked,no_plot=True)
+#
+# cell_linked = hrc.linkage(counts, method='average', metric='cosine')
+# clusterization = hrc.fcluster(cell_linked, criterion='inconsistent',t=.5,)
+# cell_dendrogram = hrc.dendrogram(cell_linked,no_plot=True)
+#
+# fig = plt.figure("neighbor_residuals", figsize=(8,4))
+# fig.suptitle("Residuals of Agglomeratively Clustered Cells")
+# ax1 = fig.add_axes([.09,.1,.2,.6])
+# # display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
+# with plt.rc_context({'lines.linewidth':0.1}):
+#     display_dendrogram = hrc.dendrogram(cell_linked,orientation='left',ax=ax1)
+# ax1.set_xlim(left=1.0,right=.75)
+# ax1.set_xscale('log')
+
+# ax2 = fig.add_axes([.3,.71,.55,.2])
+# display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
+# with plt.rc_context({'lines.linewidth':0.1}):
+#     display_dendrogram = hrc.dendrogram(gene_linked, ax=ax2)
+# ax2.set_ylim(top=1,bottom=.75)
+# ax2.set_yscale('log')
+#
+# print counts.shape
+# print len(cell_dendrogram['leaves'])
+# print len(gene_dendrogram['leaves'])
 
 
-ax1 = fig.add_axes([.05,.1,.15,.6])
+# ax3 = fig.add_axes([.3,.1,.55,.6])
+#
+# sorted_singly = counts[np.flip(cell_dendrogram['leaves'],0)]
+# sorted_doubly = sorted_singly.T[gene_dendrogram['leaves']].T
+# sorted_doubly = np.concatenate((sorted_doubly.T,np.ones((sorted_doubly.T.shape[0],1))*-10), axis=1)
+# sorted_doubly = np.concatenate((sorted_doubly,np.ones((sorted_doubly.shape[0],1))*10), axis=1)
+# im = ax3.imshow(rearranged_deviation, cmap='seismic', aspect='auto')
+# ax3.set_xticks(np.arange(0,4773,100))
+# ax3.set_yticks(np.arange(0,1656,100))
+# ax3.tick_params(labelsize=6)
+# plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
+# plt.xlabel("Genes")
+# plt.ylabel("Cells")
+# ax4 = fig.add_axes([.85,.1,.05,.6])
+# ax4.set_ylim(bottom=-10,top=10)
+# fig.colorbar(mappable=im, fraction=.99, ax=ax4)
+# np.save("clustered_counts",sorted_doubly)
+# np.save("clustered_header",header[gene_dendrogram['leaves']])
+# np.save("gene_clustering_indecies", gene_dendrogram['leaves'])
+# np.save("cell_clustering_indecies", cell_dendrogram['leaves'])
+# plt.savefig("figures/neighbor_cluster_deviation.png", dpi=800)
+
+
+#
+
+# fig = plt.figure('clustered_residuals', figsize=(8,4))
+#
+# cell_linked = hrc.linkage(deviation_matrix, method='average', metric='cosine')
+# clusterization = hrc.fcluster(cell_linked, criterion='inconsistent',t=.5,)
+# cell_dendrogram = hrc.dendrogram(cell_linked,no_plot=True)
+# gene_linked = hrc.linkage(deviation_matrix.T, method='average', metric='cosine')
+# gene_dendrogram = hrc.dendrogram(gene_linked,no_plot=True)
+#
+#
+# ax1 = fig.add_axes([.05,.1,.115,.6])
+# # display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
+# with plt.rc_context({'lines.linewidth':0.1}):
+#     display_dendrogram = hrc.dendrogram(cell_linked,orientation='left',ax=ax1)
+# ax1.set_xlim(left=1.0,right=.75)
+# ax1.set_xscale('log')
+#
+# ax2 = fig.add_axes([.18,.71,.62,.2])
+# # display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
+# with plt.rc_context({'lines.linewidth':0.1}):
+#     display_dendrogram = hrc.dendrogram(gene_linked, ax=ax2)
+# ax2.set_ylim(top=1,bottom=.75)
+# ax2.set_yscale('log')
+#
+# print len(cell_dendrogram['leaves'])
+# print len(gene_dendrogram['leaves'])
+#
+#
+# ax3 = fig.add_axes([.18,.1,.62,.6])
+#
+# clustered_residuals = deviation_matrix.T[gene_dendrogram['leaves']]
+# clustered_residuals = clustered_residuals.T[cell_dendrogram['leaves']].T
+# clustered_residuals = np.concatenate((clustered_residuals.T,np.ones((clustered_residuals.T.shape[0],1))*-7), axis=1)
+# clustered_residuals = np.concatenate((clustered_residuals,np.ones((clustered_residuals.shape[0],1))*7), axis=1)
+# im = ax3.imshow(clustered_residuals, cmap='seismic', aspect='auto')
+# # plt.title("Residual Expression of Genes In Cells, Clustered Hierarchically")
+# # plt.xlabel("Genes")
+# # plt.ylabel("Cells")
+# ax4 = fig.add_axes([.85,.1,.05,.6])
+# # ax4.set_ylim(bottom=-10,top=10)
+# fig.colorbar(mappable=im, fraction=.99, ax=ax4)
+# plt.savefig("figures/clustered_residuals.png",dpi=700)
+#
+# np.save('residual_gene_clusters', gene_dendrogram['leaves'])
+# np.save('residual_cell_clusters', cell_dendrogram['leaves'])
+# np.save('clustered_residuals', clustered_residuals)
+
+# residual_gene_cluster_out = open("figures/residual_cluster_2600_1150.txt", mode='w')
+# # residual_cell_cluster_out = open("figures/cell_cluster_700.txt", mode='w')
+#
+# residual_header_clustering = header[residual_gene_clusters]
+#
+# for i, gene in enumerate(clustered_header[2600:2800]):
+#     residual_gene_cluster_out.write(str(gene) + '\t' + str(clustered_residuals[1150:1250,2600+i].mean(axis = 0)) + "\n")
+#
+# residual_gene_cluster_out = open("figures/residual_cluster_2800_100.txt", mode='w')
+#
+# for i, gene in enumerate(clustered_header[2800:3000]):
+#     residual_gene_cluster_out.write(str(gene) + '\t' + str(clustered_residuals[100:250,2800+i].mean(axis = 0)) + "\n")
+#
+# residual_gene_cluster_out = open("figures/residual_cluster_400_700.txt", mode='w')
+#
+# for i, gene in enumerate(clustered_header[400:800]):
+#     residual_gene_cluster_out.write(str(gene) + '\t' + str(clustered_residuals[700:850,400+i].mean(axis = 0)) + "\n")
+#
+# residual_gene_cluster_out = open("figures/residual_cluster_1500_0.txt", mode='w')
+#
+# for i, gene in enumerate(clustered_header[1500:2000]):
+#     residual_gene_cluster_out.write(str(gene) + '\t' + str(clustered_residuals[0:100,1500+i].mean(axis = 0)) + "\n")
+#
+#
+# residual_gene_cluster_out = open("figures/residual_cluster_4100_1100.txt", mode='w')
+#
+# for i, gene in enumerate(clustered_header[4100:4300]):
+#     residual_gene_cluster_out.write(str(gene) + '\t' + str(clustered_residuals[1100:1400,4100+i].mean(axis = 0)) + "\n")
+
+
+fig = plt.figure('biclustered', figsize=(8,4))
+
+model = SpectralBiclustering(n_clusters=15,n_clusters=15)
+
+ax1 = fig.add_axes([.05,.1,.115,.6])
 # display_dendrogram = hrc.dendrogram(cell_linked, p=3, truncate_mode='level',orientation='left',show_contracted=True,ax=ax1)
 with plt.rc_context({'lines.linewidth':0.1}):
     display_dendrogram = hrc.dendrogram(cell_linked,orientation='left',ax=ax1)
 ax1.set_xlim(left=1.0,right=.75)
 ax1.set_xscale('log')
 
-ax2 = fig.add_axes([.25,.71,.6,.2])
+ax2 = fig.add_axes([.18,.71,.62,.2])
 # display_dendrogram = hrc.dendrogram(gene_linked, p=3, truncate_mode='level',ax=ax2)
 with plt.rc_context({'lines.linewidth':0.1}):
     display_dendrogram = hrc.dendrogram(gene_linked, ax=ax2)
@@ -275,7 +407,7 @@ print len(cell_dendrogram['leaves'])
 print len(gene_dendrogram['leaves'])
 
 
-ax3 = fig.add_axes([.25,.1,.6,.6])
+ax3 = fig.add_axes([.18,.1,.62,.6])
 
 clustered_residuals = deviation_matrix.T[gene_dendrogram['leaves']]
 clustered_residuals = clustered_residuals.T[cell_dendrogram['leaves']].T
@@ -290,6 +422,47 @@ ax4 = fig.add_axes([.85,.1,.05,.6])
 fig.colorbar(mappable=im, fraction=.99, ax=ax4)
 plt.savefig("figures/clustered_residuals.png",dpi=700)
 
-np.save('residual_gene_clusters', gene_dendrogram['leaves'])
-np.save('residual_cell_clusters', cell_dendrogram['leaves'])
-np.save('clustered_residuals', clustered_residuals)
+# fig = plt.figure("Treesplits")
+#
+# ax1 = fig.add_subplot(211)
+#
+# print fig
+# print ax1
+#
+# split_feature = 4386
+#
+#
+# top_half = counts[top_indecies]
+#
+# bottom_half = counts[bottom_indecies]
+#
+# top_half = top_half.T[gene_clustering_indecies].T
+# bottom_half = bottom_half.T[gene_clustering_indecies].T
+#
+# tree_split_counts = np.zeros((top_half.shape[0]+bottom_half.shape[0],top_half.shape[1]))
+#
+# tree_split_counts[:top_half.shape[0]] = top_half
+# tree_split_counts[top_half.shape[0]:] = bottom_half
+#
+# ax1.imshow(tree_split_counts, cmap='hot')
+#
+# ax2 = fig.add_subplot(212)
+#
+# resorted_counts = counts[np.argsort(counts[:,split_feature])].copy()
+# resorted_counts = resorted_counts[resorted_counts[:,split_feature] > 0]
+#
+# feature_correlations = np.cov(resorted_counts.T)[split_feature]
+#
+# resorted_counts = resorted_counts.T[np.argsort(feature_correlations)].T
+#
+# print resorted_counts[:,list(gene_clustering_indecies).index(627)]
+# print resorted_counts.shape
+#
+# print "Split happens at " + str(len(top_indecies))
+# # for i, element in resorted_counts[:,split_feature]:
+# #     if i%100 == 0:
+# #         print element
+#
+# ax2.imshow(resorted_counts,cmap='hot', aspect='auto')
+#
+# fig.savefig("figures/tree_split_" + str(split_feature) + ".png" ,dpi=300)
